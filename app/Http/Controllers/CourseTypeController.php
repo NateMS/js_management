@@ -1,0 +1,93 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\CourseType;
+use Illuminate\Http\Request;
+use App\Models\Team;
+
+class CourseTypeController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $courseTypes = CourseType::orderBy('order')->get();
+        return view('course-types.index', compact('courseTypes'));
+    }
+
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        $teams = Team::all();
+        $courseTypes = CourseType::all();
+        return view('course-types.create', compact('teams', 'courseTypes'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'order' => 'required|integer|min:0',
+            'minimum_age' => 'nullable|integer|min:0',
+            'maximum_age' => 'nullable|integer|min:0|gte:minimum_age',
+            'prerequisite_course_type_id' => 'nullable|exists:course_types,id',
+            'teams' => 'nullable|array',
+            'teams.*' => 'exists:teams,id',
+        ]);
+
+
+        $courseType = CourseType::create($validated);
+        $courseType->teams()->sync($validated['teams'] ?? []);
+
+        return redirect()->route('course-types.index')->with('success', 'Kurstyp erfolgreich erstellt.');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(CourseType $courseType)
+    {
+        $teams = Team::all();
+        $courseTypes = CourseType::all();
+        return view('course-types.edit', compact('courseType', 'teams', 'courseTypes'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, CourseType $courseType)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'order' => 'required|integer|min:0',
+            'minimum_age' => 'nullable|integer|min:0',
+            'maximum_age' => 'nullable|integer|min:0|gte:minimum_age',
+            'prerequisite_course_type_id' => 'nullable|exists:course_types,id',
+            'teams' => 'nullable|array',
+            'teams.*' => 'exists:teams,id',
+        ]);
+        
+        $courseType->update($validated);
+        $courseType->teams()->sync($validated['teams'] ?? []);
+
+        return redirect()->route('course-types.index')->with('success', 'Änderungen gespeichert.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(CourseType $courseType)
+    {
+        $courseType->delete();
+
+        return redirect()->route('course-types.index')->with('success', 'Kurstyp gelöscht.');
+    }
+}
