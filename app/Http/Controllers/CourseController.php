@@ -9,9 +9,39 @@ use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function availableCourses()
+    {
+        $validityDate = auth()->user()->getCourseRevalidationDate();
+
+        $courses = Course::with('courseType')
+            ->availableToCurrentTeam()
+            ->passesAgeRequirement()
+            ->registrationDeadlineNotPassed()
+            ->fullfillsCourseTypePrerequisite()
+            ->withUserStatus()
+            ->get();
+
+        $lastAttended = collect([auth()->user()->getCoursesByStatus('attended')->last()])->filter();
+        return view('courses.available', compact('courses', 'lastAttended', 'validityDate'));
+    }
+
+    public function myCourses()
+    {
+        $user = auth()->user();
+        
+        $signedUpCourses = $user->getCoursesByStatus('signed_up');
+        $registeredCourses = $user->getCoursesByStatus('registered');
+        $attendedCourses = $user->getCoursesByStatus('attended');
+        $cancelledCourses = $user->getCoursesByStatus('cancelled');
+
+        return view('courses.mycourses', compact(
+            'signedUpCourses', 
+            'registeredCourses', 
+            'attendedCourses', 
+            'cancelledCourses'
+        ));
+    }
+
     public function index(Request $request)
     {
         $user = auth()->user();

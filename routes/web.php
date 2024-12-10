@@ -22,12 +22,8 @@ Route::middleware([
     'verified',
     EnsureUserHasTeam::class,
 ])->group(function () {
-    Route::get('/', [CourseRegistrationController::class, 'availableCourses'])->name('home');
-
-    Route::resource('course-types', CourseTypeController::class);
-    Route::get('/courses/available', [CourseRegistrationController::class, 'availableCourses'])->name('courses.available');
-    Route::get('/courses/my-courses', [CourseRegistrationController::class, 'myCourses'])->name('courses.my-courses');
-    
+    Route::get('/', [CourseController::class, 'availableCourses'])->name('home');
+    Route::get('/courses/my-courses', [CourseController::class, 'myCourses'])->name('courses.my-courses');
     Route::get('/courses/signed-up', [CourseController::class, 'listSignedUpUsers'])->name('courses.signed_up');
     
     Route::middleware([CheckCourseAccess::class])->group(function() {
@@ -37,6 +33,8 @@ Route::middleware([
         Route::post('/courses/{course}/register/{user}', [CourseRegistrationController::class, 'register'])->name('courses.register');
         Route::post('/courses/{course}/change-status', [CourseRegistrationController::class, 'changeStatus'])->name('courses.change-status');
     });
+
+    Route::resource('course-types', CourseTypeController::class);
     
     Route::get('/team/users', [UserController::class, 'teamUsers'])->name('team.users');
     //Route::get('/courses/available', [CourseRegistrationController::class, 'index'])->name('courses.available');

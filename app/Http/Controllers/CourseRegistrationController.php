@@ -10,24 +10,21 @@ use Illuminate\Support\Facades\DB;
 
 class CourseRegistrationController extends Controller
 {
-    /**
-     * Display a listing of available courses for registration.
-     */
-    public function index()
-    {
-        $courses = Course::with('courseType')
-        ->where('registration_deadline', '>=', now())
-        ->orderBy('courseType.order')
-        ->get();
-
-        return view('course-registrations.index', compact('courses'));
-    }
-
     public function signUp(Request $request, Course $course)
     {
         $user = auth()->user();
+        if (!$course->isRegistrationOpen()) {
+            throw new \Exception('Registration is closed for this course.');
+        }
+        $existingRegistration = DB::table('course_user')
+            ->where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->whereIn('status', ['signed_up', 'registered', 'attended'])
+            ->exists();
 
-        $this->validateCourseRegistration($user, $course);
+        if ($existingRegistration) {
+            throw new \Exception('You are already registered for this course.');
+        }
 
         try {
             DB::transaction(function () use ($user, $course) {
@@ -121,7 +118,6 @@ class CourseRegistrationController extends Controller
         }
     }
 
-
     public function cancel(Request $request, Course $course)
     {
         $user = auth()->user();
@@ -151,57 +147,5 @@ class CourseRegistrationController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Es gab einen Fehler beim Austragen für diesen Kurs.');
         }
-    }
-
-    protected function validateCourseRegistration(User $user, Course $course)
-    {
-        // Check if registration is open
-        if (!$course->isRegistrationOpen()) {
-            throw new \Exception('Registration is closed for this course.');
-        }
-
-        // Check if user is already registered
-        $existingRegistration = DB::table('course_user')
-            ->where('user_id', $user->id)
-            ->where('course_id', $course->id)
-            ->whereIn('status', ['signed_up', 'registered', 'attended'])
-            ->exists();
-
-        if ($existingRegistration) {
-            throw new \Exception('You are already registered for this course.');
-        }
-    }
-
-    public function availableCourses()
-    {
-        $validityDate = auth()->user()->getCourseRevalidationDate();
-
-        $courses = Course::with('courseType')
-            ->availableToCurrentTeam()
-            ->passesAgeRequirement()
-            ->registrationDeadlineNotPassed()
-            ->fullfillsCourseTypePrerequisite()
-            ->withUserStatus()
-            ->get();
-
-        $lastAttended = collect([auth()->user()->getCoursesByStatus('attended')->last()])->filter();
-        return view('courses.available', compact('courses', 'lastAttended', 'validityDate'));
-    }
-
-    public function myCourses()
-    {
-        $user = auth()->user();
-        
-        $signedUpCourses = $user->getCoursesByStatus('signed_up');
-        $registeredCourses = $user->getCoursesByStatus('registered');
-        $attendedCourses = $user->getCoursesByStatus('attended');
-        $cancelledCourses = $user->getCoursesByStatus('cancelled');
-
-        return view('courses.mycourses', compact(
-            'signedUpCourses', 
-            'registeredCourses', 
-            'attendedCourses', 
-            'cancelledCourses'
-        ));
     }
 }
