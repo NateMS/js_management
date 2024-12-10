@@ -17,6 +17,8 @@ class CreateCourseTypesTable extends Migration
             $table->integer('order')->default(1);
             $table->integer('minimum_age')->nullable();
             $table->integer('maximum_age')->nullable();
+            $table->boolean('requires_repetition')->default(1);
+            $table->boolean('can_only_attend_once')->default(0);
             $table->foreignId('prerequisite_course_type_id')->nullable()->constrained('course_types')->onDelete('set null');
             $table->timestamps();
         });

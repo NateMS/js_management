@@ -10,6 +10,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Jetstream\Jetstream;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -77,9 +78,14 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function attendedCourses()
+    {
+        return $this->courses()->wherePivot('status', 'attended');
+    }
+
     public function getCoursesByStatus($status = null)
     {
-        $query = $this->courses();
+        $query = $this->courses()->notHidden();
 
         if ($status) {
             $query->wherePivot('status', $status);
@@ -88,53 +94,9 @@ class User extends Authenticatable
         return $query->get();
     }
 
-        /**
-     * Get detailed license renewal status
-     */
-    public function getLicenseRenewalStatus()
-    {
-        // Find the last attended course
-        $lastAttendedCourse = $this->courses()
-            ->wherePivot('status', 'attended')
-            ->latest('pivot_attended_at')
-            ->first();
-
-        // If no courses attended
-        if (!$lastAttendedCourse) {
-            return [
-                'needs_renewal' => true,
-                'last_course_year' => null,
-                'next_renewal_year' => Carbon::now()->year,
-                'years_since_last_course' => null,
-                'pending_registrations' => $this->courses()
-                    ->wherePivot('status', 'signed_up')
-                    ->count()
-            ];
-        }
-
-        // Get the year of the last attended course
-        $lastCourseYear = Carbon::parse($lastAttendedCourse->pivot->attended_at)->year;
-        
-        // Calculate next renewal year
-        $nextRenewalYear = $lastCourseYear + 2;
-        
-        // Current year
-        $currentYear = Carbon::now()->year;
-
-        return [
-            'needs_renewal' => $currentYear >= $nextRenewalYear,
-            'last_course_year' => $lastCourseYear,
-            'next_renewal_year' => $nextRenewalYear,
-            'years_since_last_course' => $currentYear - $lastCourseYear,
-            'pending_registrations' => $this->courses()
-                ->wherePivot('status', 'signed_up')
-                ->count()
-        ];
-    }
-
     public function courseTypes()
     {
-        return $this->belongsToMany(CourseType::class);
+        return $this->belongsToMany(CourseType::class)->withTimestamps();
     }
 
     public function isJSCoach()
@@ -142,9 +104,56 @@ class User extends Authenticatable
         return $this->is_js_coach;
     }
 
-    public function canManageTeamMembers($team)
-{
-    return $this->ownsTeam($team) || $this->hasTeamPermission($team, 'manageMembers');
-}
+    public function getformattedBirthdateAttribute()
+    {
+        return Carbon::parse($this->birthdate)->format('d.m.Y');
+    }
 
+    public function getIsoformattedBirthdateAttribute()
+    {
+        return Carbon::parse($this->birthdate)->format('Y-m-d');
+    }
+
+    public function canManageTeamMembers($team)
+    {
+        return $this->ownsTeam($team) || $this->hasTeamPermission($team, 'manageMembers');
+    }
+
+    public function getCourseRevalidationDate()
+    {   
+        $course = $this->courses()
+            ->where('status', 'attended')
+            ->whereHas('courseType', function ($query) {
+                $query->where('requires_repetition', true);
+            })
+            ->latest('date_start')
+            ->first();
+
+        if ($course) {
+            $updatedYear = Carbon::parse($course->date_start)->format('Y');
+
+            $validityYear = $updatedYear + 2;
+    
+            $validUntil = Carbon::createFromDate($validityYear, 12, 31)->format('d.m.Y');
+        } else {
+            $validUntil = false;
+        }
+        return $validUntil;
+    }
+
+    public function isJSVerantwortlich() {
+        return $this->hasRoleInCurrentTeam('js_manager') || $this->isJSCoach();
+    }
+
+    public function hasRoleInCurrentTeam($role)
+    {
+        if ($this->currentTeam) {
+            $userInTeam = $this->currentTeam->users->find($this->id);
+
+            if ($userInTeam) {
+                return Jetstream::findRole($this->currentTeam->users->where('id', $this->id)->first()->membership->role)->key === $role;
+            }
+        }
+        return false;
+    }
 }

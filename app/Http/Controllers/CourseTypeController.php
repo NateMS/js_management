@@ -33,11 +33,16 @@ class CourseTypeController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge([
+            'requires_repetition' => $request->has('requires_repetition') ? true : false,
+        ]);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'order' => 'required|integer|min:0',
             'minimum_age' => 'nullable|integer|min:0',
             'maximum_age' => 'nullable|integer|min:0|gte:minimum_age',
+            'requires_repetition' => 'nullable|boolean',
             'prerequisite_course_type_id' => 'nullable|exists:course_types,id',
             'teams' => 'nullable|array',
             'teams.*' => 'exists:teams,id',
@@ -65,11 +70,16 @@ class CourseTypeController extends Controller
      */
     public function update(Request $request, CourseType $courseType)
     {
+        $request->merge([
+            'requires_repetition' => $request->has('requires_repetition') ? true : false,
+        ]);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'order' => 'required|integer|min:0',
             'minimum_age' => 'nullable|integer|min:0',
             'maximum_age' => 'nullable|integer|min:0|gte:minimum_age',
+            'requires_repetition' => 'nullable|boolean',
             'prerequisite_course_type_id' => 'nullable|exists:course_types,id',
             'teams' => 'nullable|array',
             'teams.*' => 'exists:teams,id',

@@ -77,7 +77,7 @@ class Course extends Model
     {
         return $query->whereHas('courseType', function ($courseTypeQuery) use ($teamId) {
             $courseTypeQuery->whereHas('teams', function ($teamQuery) use ($teamId) {
-                $teamQuery->where('id', $teamId);
+                $teamQuery->where('team_id', $teamId);
             });
         });
     }
@@ -86,11 +86,11 @@ class Course extends Model
     {
         $user = Auth::user();
 
-        if (!$user || !$user->team) {
+        if (!$user || !$user->currentTeam) {
             return $query;
         }
 
-        $teamId = $user->team->id;
+        $teamId = $user->currentTeam->id;
 
         return $query->availableToTeam($teamId);
     }
@@ -128,17 +128,21 @@ class Course extends Model
             return $query;
         }
 
-        return $query->whereHas('courseType', function ($courseTypeQuery) use ($user) {
-            $courseTypeQuery->where(function ($query) use ($user) {
+        $courseTypes = $user->attendedCourses()->with('courseType')->get()->pluck('courseType.id')->unique()->toArray();
+
+        return $query->whereHas('courseType', function ($courseTypeQuery) use ($courseTypes) {
+            $courseTypeQuery->where(function ($query) use ($courseTypes) {
                 $query->whereNull('prerequisite_course_type_id')
-                    ->orWhereHas('prerequisiteCourseType.users', function ($userQuery) use ($user) {
-                        $userQuery->where('user_id', $user->id);
-                    });
-            });
+                    ->orWhereIn('prerequisite_course_type_id', $courseTypes);
+            })
+            ->where('can_only_attend_once', false);
         });
-}
+    }
 
-
+    public function scopeNotHidden($query)
+    {
+        return $query->where('is_hidden', false);
+    }
 
     /**
      * Check if registration is still open
@@ -162,6 +166,59 @@ class Course extends Model
     {
         return $this->hasOne(CourseUser::class, 'course_id')
             ->where('user_id', auth()->id());
+    }
+
+    public function availableUsers()
+    {
+    if (auth()->user()->isJSCoach()) {
+        $teamUsers = User::all();
+    } else {
+        $teamUsers = auth()->user()->currentTeam->users;
+    }
+    $signedUpUserIds = $this->users()->pluck('users.id')->toArray();
+
+    return $teamUsers->filter(function ($user) use ($signedUpUserIds) {
+        if (in_array($user->id, $signedUpUserIds)) {
+            return false;
+        }
+
+        if (!auth()->user()->isJSCoach() && $user->isJSCoach()) {
+            return false;
+        }
+
+        return $this->meetsAgeRequirementForUser($user) &&
+               $this->meetsPrerequisiteRequirementForUser($user);
+    });
+    }
+
+    protected function meetsAgeRequirementForUser($user)
+    {
+        if (!$user->birthdate) {
+            return false; // User must have a birthdate
+        }
+
+        $birthYear = Carbon::parse($user->birthdate)->year;
+        $courseYear = Carbon::parse($this->date_start)->year;
+
+        $minAge = $this->courseType->minimum_age;
+        $maxAge = $this->courseType->maximum_age;
+
+        return ($minAge === null || ($courseYear - $birthYear >= $minAge)) &&
+            ($maxAge === null || ($courseYear - $birthYear <= $maxAge));
+    }
+
+    protected function meetsPrerequisiteRequirementForUser($user)
+    {
+        $attendedCourseTypes = $user->attendedCourses()
+            ->with('courseType')
+            ->get()
+            ->pluck('courseType.id')
+            ->unique()
+            ->toArray();
+
+        $prerequisiteId = $this->courseType->prerequisite_course_type_id;
+
+        return $prerequisiteId === null || in_array($prerequisiteId, $attendedCourseTypes);
     }
 
 }

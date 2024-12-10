@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-header>{{ $course->courseType->name }} ({{ $course->course_nr }})</x-header>
+        <x-header>{{ $course->courseType->name }} {{ $course->course_nr ? '(' . $course->course_nr . ')' : "Kurs" }}</x-header>
     </x-slot>
-    <div class="max-w-7xl mx-auto md:grid md:grid-cols-4 md:gap-4">
-        <div class="md:col-span-2">
+    <div class="max-w-7xl mx-auto md:grid md:grid-cols-7 md:gap-4">
+        <div class="md:col-span-3">
             <x-content-view>  
                 <h3 class="font-semibold text-xl">{{ $course->course_nr }}</h3>
                 <table class="mt-4 w-full text-sm text-left text-gray-500">
@@ -47,25 +47,37 @@
                     @endif
                 </table>
 
-                @if ($course->registration_deadline >= now())
-                    @if ($isRegistered)
-                        <form action="{{ route('courses.cancel', $course) }}" method="POST">
-                            @csrf
-                            <x-button class="mt-6 bg-red-700">Austragen</x-button>
-                        </form>
-                    @else
-                        <form action="{{ route('courses.signup', $course) }}" method="POST">
-                            @csrf
-                            <x-button class="mt-6 btn btn-primary">Eintragen</x-button>
-                        </form>
-                    @endif
+                <a href="{{ route('courses.edit', $course) }}" class="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Bearbeiten</a>
+                          
+                @if (auth()->user()->isJSCoach())
+                    <form class="inline" action="{{ route('courses.destroy', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Möchten Sie diesen Kurstyp wirklich löschen?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="px-4 py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-600 focus:bg-red-600 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Löschen</button>
+                    </form>
                 @endif
-
             </x-content-view>
         </div>
-        <div class="md:col-span-2">
+        <div class="md:col-span-4">
             <x-content-view>
-                <h3 class="font-semibold text-xl">Kursteilnehmer</h3>
+                <div class="grid grid-cols-2">
+                    <h3 class="font-semibold text-xl">Kursteilnehmer</h3>
+                    @if ($course->registration_deadline >= now())
+                        <span class="flex justify-end">
+                            @if ($userStatus == 'signed_up')
+                                <form action="{{ route('courses.cancel', $course) }}" method="POST">
+                                    @csrf
+                                    <x-button class="bg-red-700">Mich Austragen</x-button>
+                                </form>
+                            @elseif ($userStatus !== 'registered' && $userStatus !== 'attended')
+                                <form action="{{ route('courses.signup', $course) }}" method="POST">
+                                    @csrf
+                                    <x-button class="btn btn-primary">Mich Eintragen</x-button>
+                                </form>
+                            @endif
+                        </span>
+                    @endif
+                </div>
                 @if($users->isEmpty())
                     <x-no-data>Es sind noch keine Teilnehmer für diesen Kurs eingetragen.</x-no-data>
                 @else
@@ -73,18 +85,72 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr class="text-left">
                                 <th class="px-6 py-3">Name</th>
-                                <th class="px-6 py-3">Eingetragen am</th>
+                                <th class="px-6 py-3">Datum</th>
+                                <th class="px-6 py-3">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($users as $user)
                                 <tr class="odd:bg-white even:bg-gray-50 text-gray-900 border-b">
-                                    <td class="px-6 py-4">{{ $user->name }}</td>
-                                    <td class="px-6 py-4">{{ $user->pivot->created_at->format('d.m.Y') }}</td> <!-- Displaying the registration date -->
+                                    <td class="px-6 py-3">{{ $user->name }}</td>
+                                    <td class="px-6 py-3">{{ $user->pivot->formatted_timestamp }}</td>
+                                    @if ((auth()->user()->isJSVerantwortlich() && $currentTeamUsers->contains($user) && !$user->isJSCoach()) || auth()->user()->isJSCoach())
+                                        <td class="px-6 py-3">
+                                            <form action="{{ route('courses.change-status', [$course]) }}" method="POST" class="ml-auto">
+                                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                @csrf
+                                                <span class="flex">
+                                                    <select id="status" onchange="this.form.submit()" name="status" class="border-transparent bg-gray-200 rounded-md">
+                                                        <option value="signed_up" {{ $user->pivot->status == 'signed_up' ? 'selected' : ''}}>Eingetragen</option>
+                                                        @if (auth()->user()->isJSCoach() || $user->pivot->status == 'registered')
+                                                            <option value="registered" {{ $user->pivot->status == 'registered' ? 'selected' : ''}}>Angemeldet</option>
+                                                        @endif
+                                                        <option value="attended" {{ $user->pivot->status == 'attended' ? 'selected' : ''}}>Teilgenommen</option>
+                                                        <option value="cancelled" {{ $user->pivot->status == 'cancelled' ? 'selected' : ''}}>Abgesagt</option>
+                                                    </select>
+                                                </span>
+                                            </form>
+                                        </td>
+                                    @else
+                                        <td class="px-6 py-3">{{ $user->pivot->formatted_status }}</td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                @endif
+                @if (auth()->user()->isJSVerantwortlich() && !$availableUsers->isEmpty())
+                    <form action="{{ route('courses.change-status', [$course]) }}" method="POST" class="ml-auto">
+                        @csrf
+                        <span class="flex mt-2">
+                            <select id="user_id" name="user_id" class="border-transparent bg-gray-200 rounded-md">
+                                <option value="" disabled selected>Leiter auswählen</option>
+                                @foreach ($availableUsers as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                            <select id="status" name="status" class="ml-2 border-transparent bg-gray-200 rounded-md">
+                                <option value="signed_up">Eingetragen</option>
+                                @if (auth()->user()->isJSCoach())
+                                    <option value="registered">Angemeldet</option>
+                                @endif
+                                <option value="attended">Teilgenommen</option>
+                                <option value="cancelled">Abgesagt</option>
+                            </select>
+                            <x-button type="submit" class="ml-2 px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                ✓
+                            </x-button>
+                        </span>
+                    </form>
+                @endif
+                @if ($userStatus == 'signed_up')
+                    <span class="mt-3 block text-gray-600">Du hast dich für diesen Kurs eingetragen. Sobald die Anmeldung durch den J&S-Coach erfolgt ist, ändert sich der Status auf 'Angemeldet'.</span>
+                @endif
+                @if ($userStatus == 'registered')
+                    <span class="mt-3 block text-gray-600">Du wurdest durch den J&S-Coach für diesen Kurs angemeldet. Du kannst dich nicht mehr selbstständig austragen. Wenn du dich vom Kurs abgemeldet hast, melde dies dem J&S-Coach oder dem J&S Verantwortlichen deiner Riege.</span>
+                @endif
+                @if ($userStatus == 'attended')
+                    <span class="mt-3 block text-gray-600">Du hast an diesem Kurs teilgenommen!</span>
                 @endif
             </x-content-view> 
         </div>

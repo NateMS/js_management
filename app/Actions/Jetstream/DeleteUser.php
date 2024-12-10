@@ -38,7 +38,7 @@ class DeleteUser implements DeletesUsers
         $user->teams()->detach();
 
         $user->ownedTeams->each(function (Team $team) {
-            $newOwner = $team->users()->whereJsonContains('team_user.role', 'jsmanager')->first();
+            $newOwner = $team->users()->whereJsonContains('team_user.role', 'js_manager')->first();
             if ($newOwner) {
                 $team->update(['user_id' => $newOwner->id]);
             } else {

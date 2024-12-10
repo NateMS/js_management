@@ -45,7 +45,7 @@ class JetstreamServiceProvider extends ServiceProvider
     {
         Jetstream::defaultApiTokenPermissions(['read']);
 
-        Jetstream::role('jsmanager', 'J&S Verantwortliche*r', [
+        Jetstream::role('js_manager', 'J&S Verantwortliche*r', [
             'course:create',
             'course:update',
             'course:delete',

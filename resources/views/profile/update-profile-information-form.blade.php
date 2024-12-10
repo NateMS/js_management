@@ -89,7 +89,6 @@
             <x-input-error for="js_number" class="mt-2" />
         </div>
 
-        <!-- J&S Number -->
         <div class="col-span-6 sm:col-span-4">
             <x-label for="birthdate" value="Geburtsdatum" />
             <x-input id="birthdate" type="date" class="mt-1 block w-full" wire:model="state.birthdate" required autocomplete="birthdate" />

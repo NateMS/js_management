@@ -32,6 +32,13 @@
                 @enderror
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <x-label for="requires_repetition" value="Braucht Wiederholung alle 2 Jahre?" />
+                <x-input type="checkbox" name="requires_repetition" id="requires_repetition" class="mt-1 block" />
+                @error('requires_repetition')
+                    <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <x-label for="order" value="Reihenfolge" />
                 <x-input type="number" name="order" id="order" class="mt-1 block w-full" required />
                 @error('order')

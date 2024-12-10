@@ -18,12 +18,21 @@
                     <x-nav-link href="{{ route('courses.my-courses') }}" :active="request()->routeIs('courses.my-courses')">
                         {{ __('Meine Kurse') }}
                     </x-nav-link>
+                    @if(Auth()->user()->isJSVerantwortlich())
                     <x-nav-link href="{{ route('courses.index') }}" :active="request()->routeIs('courses.index')">
-                        {{ __('Kurse') }}
+                        {{ __('Kursverwaltung') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('course-types.index') }}" :active="request()->routeIs('course-types.index')">
-                        {{ __('Kurstypen') }}
-                    </x-nav-link>
+                    @endif
+                    @if(Auth()->user()->isJSCoach())
+                        <x-nav-link href="{{ route('course-types.index') }}" :active="request()->routeIs('course-types.index')">
+                            {{ __('Kurstypen') }}
+                        </x-nav-link>
+                    @endif
+                    @if(Auth()->user()->isJSCoach())
+                        <x-nav-link href="{{ route('courses.signed_up') }}" :active="request()->routeIs('courses.signed_up')">
+                            {{ __('Eingetragene') }}
+                        </x-nav-link>
+                    @endif
                     <x-nav-link href="{{ route('team.users') }}" :active="request()->routeIs('team.users')">
                         {{ __('Leiter') }}
                     </x-nav-link>

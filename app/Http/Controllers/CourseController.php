@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use Illuminate\Validation\Rule;
 use App\Models\CourseType;
 use Illuminate\Http\Request;
 
@@ -11,10 +12,22 @@ class CourseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::with('courseType')->get();
-        return view('courses.index', compact('courses'));
+        $user = auth()->user();
+        if (!$user->isJSVerantwortlich()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um die Kursverwaltung anzuschauen.');
+        }
+        $years = \App\Models\Course::query()
+            ->selectRaw('strftime("%Y", date_start) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year');
+        $selectedYear = $years ? $request->input('year', $years->first()) : '';
+        
+
+        $courses = $selectedYear ? Course::whereRaw('strftime("%Y", date_start) = ?', [$selectedYear])->with('courseType')->get() : Course::with('courseType')->get();
+        return view('courses.index', compact('courses', 'years', 'selectedYear'));
     }
 
     /**
@@ -22,7 +35,18 @@ class CourseController extends Controller
      */
     public function create()
     {
-        $courseTypes = CourseType::all();
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+        if (!$user->isJSVerantwortlich()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um einen Kurs zu erstellen.');
+        }
+        if ($user->isJsCoach()) {
+            $courseTypes = CourseType::all();
+        } else {
+            $courseTypes = CourseType::whereHas('teams', function ($query) use ($currentTeam) {
+                $query->where('teams.id', $currentTeam->id);
+            })->get();
+        }
         return view('courses.create', compact('courseTypes'));
     }
 
@@ -31,10 +55,24 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+        if (!$user->isJSVerantwortlich()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um einen Kurs zu erstellen.');
+        }
+
+        $courseTypeIds = CourseType::whereHas('teams', function ($query) use ($currentTeam) {
+            $query->where('teams.id', $currentTeam->id);
+        })->pluck('id')->toArray();
+
         $request->validate([
-            'course_nr' => 'required|string|unique:courses|max:255',
+            'course_nr' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
-            'course_type_id' => 'required|exists:course_types,id',
+            'course_type_id' => [
+                'required',
+                'exists:course_types,id',
+                Rule::in($user->isJSCoach() ? [] : $courseTypeIds), // Skip `in` rule for JSCoach
+            ],
             'location' => 'required|string|max:255',
             'date_start' => 'required|date|before_or_equal:date_end',
             'date_end' => 'required|date|after_or_equal:date_start',
@@ -46,7 +84,7 @@ class CourseController extends Controller
 
         Course::create($request->all());
 
-        return redirect()->route('courses.index')->with('success', 'Course created successfully.');
+        return redirect()->route('courses.index')->with('success', 'Kurs erstellt.');
     }
 
     /**
@@ -55,12 +93,20 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         $user = auth()->user();
+        
         $users = $course->users;
 
-        $isRegistered = $course->users->contains($user);
+        $userStatus = $course->users()
+            ->where('user_id', $user->id)
+            ->first()?->pivot->status;
 
-        return view('courses.show', compact('course', 'users', 'isRegistered'));
+        $currentTeamUsers = $user->currentTeam->users;
+
+        $availableUsers = $course->availableUsers();
+
+        return view('courses.show', compact('course', 'users', 'userStatus', 'availableUsers', 'currentTeamUsers'));
     }
+
 
 
     /**
@@ -68,7 +114,19 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
-        $courseTypes = CourseType::all(); // Get all course types for the dropdown
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+        if (!$user->isJSVerantwortlich()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs zu bearbeiten.');
+        }
+
+        if ($user->isJsCoach()) {
+            $courseTypes = CourseType::all();
+        } else {
+            $courseTypes = CourseType::whereHas('teams', function ($query) use ($currentTeam) {
+                $query->where('teams.id', $currentTeam->id);
+            })->get();
+        }
         return view('courses.edit', compact('course', 'courseTypes'));
     }
 
@@ -77,10 +135,24 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+        if (!$user->isJSVerantwortlich()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs zu bearbeiten.');
+        }
+
+        $courseTypeIds = CourseType::whereHas('teams', function ($query) use ($currentTeam) {
+            $query->where('teams.id', $currentTeam->id);
+        })->pluck('id')->toArray();
+
         $request->validate([
-            'course_nr' => 'required|string|unique:courses,course_nr,' . $course->id . '|max:255',
+            'course_nr' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
-            'course_type_id' => 'required|exists:course_types,id',
+            'course_type_id' => [
+                'required',
+                'exists:course_types,id',
+                Rule::in($user->isJSCoach() ? [] : $courseTypeIds),
+            ],
             'location' => 'required|string|max:255',
             'date_start' => 'required|date|before_or_equal:date_end',
             'date_end' => 'required|date|after_or_equal:date_start',
@@ -92,46 +164,30 @@ class CourseController extends Controller
 
         $course->update($request->all());
 
-        return redirect()->route('courses.index')->with('success', 'Course updated successfully.');
+        return redirect()->route('courses.show', $course)->with('success', 'Kursänderungen gespeichert.');
     }
 
-    public function registerForCourse(Course $course)
+    public function listSignedUpUsers()
     {
-        $user = auth()->user();
+        $courses = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'signed_up');
+        })
+        ->with(['users' => function ($query) {
+            $query->where('course_user.status', 'signed_up');
+        }])
+        ->get();
 
-        if ($course->registration_deadline >= now()) {
-            $course->users()->attach($user);
-            return back()->with('success', 'Sie haben sich erfolgreich für den Kurs angemeldet.');
-        }
-
-        return back()->with('error', 'Die Registrierungsfrist für diesen Kurs ist bereits abgelaufen.');
+        return view('courses.signed_up', compact('courses'));
     }
 
-    public function unregisterFromCourse(Course $course)
-    {
-        $user = auth()->user();
-
-        if ($course->users->contains($user)) {
-            $course->users()->detach($user);
-            return back()->with('success', 'Sie haben sich erfolgreich vom Kurs abgemeldet.');
-        }
-
-        return back()->with('error', 'Sie sind nicht für diesen Kurs registriert.');
-    }
 
     public function destroy(Course $course)
     {
-        $course->delete();
+        if (auth()->user()->isJSCoach()) {
+            $course->delete();
+            return redirect()->route('courses.index')->with('success', 'Kurs gelöscht.');
+        }        
 
-        return redirect()->route('courses.index')->with('success', 'Course deleted successfully.');
+        return redirect()->route('courses.index')->with('error', 'Du hast keine Berechtigung, um diesen Kurs zu löschen.');
     }
-
-    public function userCourses()
-    {
-        $user = auth()->user();
-        $courses = $user->courses()->orderBy('date_start')->get();
-
-        return view('courses.user-courses', compact('courses'));
-    }
-
 }

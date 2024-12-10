@@ -15,7 +15,12 @@ class EnsureUserHasTeam
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->allTeams()->count() > 0) {
+        $user = $request->user();
+        if ($user->allTeams()->count() > 0) {
+            if ($user->current_team_id == null) {
+                $user->current_team_id = $user->allTeams()->first()->id;
+                $user->save();
+            }
             return $next($request);
         }
         

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Carbon\Carbon;
 
 class CourseUser extends Pivot
 {
@@ -21,6 +22,28 @@ class CourseUser extends Pivot
             'attended' => 'Teilgenommen',
             'cancelled' => 'Abgesagt',
             default => 'Unbekannt',
+        };
+    }
+
+    public static function getTimestampField(string $status)
+    {
+        return match ($status) {
+            'signed_up' => 'signed_up_at',
+            'registered' => 'registered_at',
+            'attended' => 'completed_at',
+            'cancelled' => 'cancelled_at',
+            default => 'Unbekannt',
+        };
+    }
+
+    public function getFormattedTimestampAttribute()
+    {
+        return match ($this->status) {
+            'signed_up' => Carbon::parse($this->signed_up_at)->format('d.m.Y'),
+            'registered' => Carbon::parse($this->registered_at)->format('d.m.Y'),
+            'attended' => Carbon::parse($this->completed_at)->format('d.m.Y'),
+            'cancelled' => Carbon::parse($this->cancelled_at)->format('d.m.Y'),
+            default => '/',
         };
     }
 

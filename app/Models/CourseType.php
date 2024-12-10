@@ -11,7 +11,9 @@ class CourseType extends Model
         'order',
         'minimum_age',
         'maximum_age',
-        'prerequisite_course_type_id'
+        'prerequisite_course_type_id',
+        'can_only_attend_once',
+        'requires_repetition',
     ];
 
     public function teams()
@@ -21,7 +23,7 @@ class CourseType extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(User::class);
     }
 
     public function courses()

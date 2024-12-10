@@ -13,7 +13,7 @@ class CreateCoursesTable extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('course_nr')->unique();
+            $table->string('course_nr')->nullable();
             $table->string('name');
             $table->foreignId('course_type_id')->constrained('course_types');
             $table->string('location');
@@ -21,6 +21,7 @@ class CreateCoursesTable extends Migration
             $table->date('date_end');
             $table->string('prerequisites')->nullable();
             $table->date('registration_deadline');
+            $table->boolean('is_hidden')->default(0);
             $table->text('notes')->nullable();
             $table->string('link')->nullable();
             $table->timestamps();

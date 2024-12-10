@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\User;
+use App\Models\CourseUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -26,23 +27,100 @@ class CourseRegistrationController extends Controller
     {
         $user = auth()->user();
 
-        // Validate course registration
         $this->validateCourseRegistration($user, $course);
 
         try {
             DB::transaction(function () use ($user, $course) {
-                // Attach user to course
-                $user->courses()->attach($course->id, [
-                    'status' => 'signed_up',
-                    'signed_up_at' => now()
-                ]);
+                if ($user->courses()->where('course_id', $course->id)->exists()) {
+                    $user->courses()->updateExistingPivot($course->id, [
+                        'status' => 'signed_up',
+                        'signed_up_at' => now()
+                    ]);
+                } else {
+                    $user->courses()->attach($course->id, [
+                        'status' => 'signed_up',
+                        'signed_up_at' => now()
+                    ]);
+                }
             });
-
-            return redirect()->back()->with('success', 'Du hat dich eingetragen. Der / Die J&S Coach/in wird per E-Mail informiert.');
+    
+            return redirect()->back()->with('success', 'Du hast dich eingetragen. Der J&S Coach wird per E-Mail informiert.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Es gab einen Fehler beim eintragen in diesen Kurs');
+            return redirect()->back()->with('error', 'Es gab einen Fehler beim Eintragen in diesen Kurs.');
         }
     }
+
+    public function register(Request $request, Course $course, User $user)
+    {
+        $currUser = auth()->user();
+        if (!$currUser->isJSCoach()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Status zu ändern.');
+        }
+        try {
+            DB::transaction(function () use ($user, $course) {
+                if ($user->courses()->where('course_id', $course->id)->exists()) {
+                    $user->courses()->updateExistingPivot($course->id, [
+                        'status' => 'registered',
+                        'registered_at' => now()
+                    ]);
+                } else {
+                    $user->courses()->attach($course->id, [
+                        'status' => 'registered',
+                        'registered_at' => now()
+                    ]);
+                }
+            });
+    
+            return redirect()->back()->with('success', $user->name . ' wurde für den Kurs angemeldet.');
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Es gab einen Fehler beim Anmelden dieses Kurses.');
+        }
+    }
+
+    public function changeStatus(Request $request, Course $course)
+    {
+
+        $currUser = auth()->user();
+        $currentTeam = $currUser->currentTeam;
+        if (!$currUser->isJSVerantwortlich() || !$currentTeam) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Status zu ändern.');
+        }
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'status' => 'required|in:signed_up,registered,attended,cancelled',
+        ]);
+        $user = User::findOrFail($validated['user_id']);
+        if (!$currUser->isJsCoach() && !$currentTeam->users->contains($user)) {
+            return redirect()->back()->with('error', 'Der Benutzer gehört nicht zum aktuellen Team.');
+        }
+
+        if (!$currUser->isJsCoach() && $validated['status'] == 'registered') {
+            return redirect()->back()->with('error', 'Nur ein J&S Coach kann einen Leiter anmelden.');
+        }
+
+        try {
+            DB::transaction(function () use ($user, $course, $validated) {
+                if ($user->courses()->where('course_id', $course->id)->exists()) {
+                    $user->courses()->updateExistingPivot($course->id, [
+                        'status' => $validated['status'],
+                        CourseUser::getTimestampField($validated['status']) => now(),
+                    ]);
+                } else {
+                    $user->courses()->attach($course->id, [
+                        'status' => $validated['status'],
+                        CourseUser::getTimestampField($validated['status']) => now(),
+                    ]);
+                }
+            });
+
+            return redirect()->back()->with('success', "{$user->name} wurde für den Kurs aktualisiert.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Es gab einen Fehler.');
+        }
+    }
+
 
     public function cancel(Request $request, Course $course)
     {
@@ -96,6 +174,8 @@ class CourseRegistrationController extends Controller
 
     public function availableCourses()
     {
+        $validityDate = auth()->user()->getCourseRevalidationDate();
+
         $courses = Course::with('courseType')
             ->availableToCurrentTeam()
             ->passesAgeRequirement()
@@ -105,7 +185,7 @@ class CourseRegistrationController extends Controller
             ->get();
 
         $lastAttended = collect([auth()->user()->getCoursesByStatus('attended')->last()])->filter();
-        return view('courses.available', compact('courses', 'lastAttended'));
+        return view('courses.available', compact('courses', 'lastAttended', 'validityDate'));
     }
 
     public function myCourses()
