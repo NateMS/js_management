@@ -14,6 +14,7 @@
                     <tr>
                         <th class="px-6 py-3">Name</th>
                         <th class="px-6 py-3">E-Mail</th>
+                        <th class="px-6 py-3">Rolle</th>
                         <th class="px-6 py-3">Beigetreten</th>
                     </tr>
                 </thead>
@@ -22,6 +23,7 @@
                         <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50">
                             <td class="px-6 py-4 font-medium text-gray-900">{{ $user->name }}</td>
                             <td class="px-6 py-4">{{ $user->email }}</td>
+                            <td class="px-6 py-4">{{ $user->teamrole(Auth::user()->currentTeam)->name }}</td>
                             <td class="px-6 py-4">{{ $user->created_at->format('d.m.Y') }}</td>
                         </tr>
                     @endforeach

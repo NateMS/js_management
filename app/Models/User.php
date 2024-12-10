@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +20,9 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
     use HasProfilePhoto;
+    use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -31,7 +32,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'birthdate'
+        'birthdate',
+        'js_number'
     ];
 
     /**
@@ -130,19 +132,9 @@ class User extends Authenticatable
         ];
     }
 
-    public function team()
-    {
-        return $this->belongsTo(Team::class);
-    }
-
     public function courseTypes()
     {
         return $this->belongsToMany(CourseType::class);
-    }
-
-    public function isManager()
-    {
-        return $this->is_manager;
     }
 
     public function isJSCoach()
@@ -150,5 +142,9 @@ class User extends Authenticatable
         return $this->is_js_coach;
     }
 
+    public function canManageTeamMembers($team)
+{
+    return $this->ownsTeam($team) || $this->hasTeamPermission($team, 'manageMembers');
+}
 
 }

@@ -15,7 +15,7 @@
         @foreach ($courses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
             <x-content-view>
                 <h2 class="text-xl font-bold text-gray-800 mb-4">{{ $courseTypeName }}</h2>
-                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr class="text-left">
                             <th class="px-6 py-3">Kursnummer</th>

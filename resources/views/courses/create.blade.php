@@ -21,9 +21,9 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <!-- Course Type -->
-                <x-label for="course_type_id" value="Kursart" />
+                <x-label for="course_type_id" value="Kurstyp" />
                 <select name="course_type_id" id="course_type_id" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
-                    <option value="">Wählen Sie die Kursart</option>
+                    <option value="">Wähle den Kurstyp</option>
                     @foreach($courseTypes as $courseType)
                         <option value="{{ $courseType->id }}">{{ $courseType->name }}</option>
                     @endforeach

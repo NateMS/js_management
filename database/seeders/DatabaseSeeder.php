@@ -18,13 +18,24 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        Team::create([
-            'name' => 'Kutu / Getu Knaben',
-        ]);
+        // User::updateOrCreate(
+        //     ['email' => 'nadim@salloum.ch'],
+        //     [
+        //         'name' => 'Nadim Salloum',
+        //         'email' => 'nadim@salloum.ch',
+        //         'password' => Hash::make('abcd1234'),
+        //     ]
+        // );
 
-        Team::create([
-            'name' => 'Getu Mädchen',
-        ]);
+        // Team::create([
+        //     'name' => 'Kutu / Getu Knaben',
+        //     'user_id' => 1,
+        // ]);
+
+        // Team::create([
+        //     'name' => 'Getu Mädchen',
+        //     'user_id' => 1,
+        // ]);
 
         CourseType::create([
             'name' => 'Grundkurs Kutu / Getu',
@@ -44,16 +55,6 @@ class DatabaseSeeder extends Seeder
             'maximum_age' => 18,
             'order' => 3,
         ]);
-
-        User::updateOrCreate(
-            ['email' => 'nadim@salloum.ch'],
-            [
-                'name' => 'Nadim Salloum',
-                'email' => 'nadim@salloum.ch',
-                'password' => Hash::make('abcd1234'),
-                'is_manager' => true
-            ]
-        );
 
         // User::factory()->create([
         //     'name' => 'Nadim Salloum',

@@ -5,15 +5,21 @@ use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseRegistrationController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureUserHasTeam;
+
+Route::get('dashboard', function () {
+    return view('welcome');
+});
 
 Route::get('/', function () {
-    return view('auth/login');
+    return view('welcome');
 });
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
+    EnsureUserHasTeam::class,
 ])->group(function () {
     Route::get('/', [CourseRegistrationController::class, 'availableCourses'])->name('home');
 
@@ -32,6 +38,4 @@ Route::middleware([
     //Route::delete('/courses/{course}/unregister', [CourseRegistrationController::class, 'unregister'])->name('courses.unregister');
 
     //Route::get('my-courses', [CourseController::class, 'userCourses'])->name('courses.user-courses');
-
-    
 });

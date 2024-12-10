@@ -10,7 +10,7 @@
             @csrf
             @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <x-label for="name" value="Kursart" />
+                <x-label for="name" value="Kurstyp" />
                 <x-input type="text" name="name" id="name" class="mt-1 block w-full" value="{{ old('name', $courseType->name) }}" required />
                 @error('name')
                     <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
@@ -52,7 +52,7 @@
                 </select>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <x-label for="teams" value="Kurse diser Kursart für folgende Gruppen sichtbar machen" />
+                <x-label for="teams" value="Kurse dieses Kurstyps für folgende Gruppen sichtbar machen" />
                 <select multiple name="teams[]" id="teams" class="block mt-1 w-full">
                     @foreach ($teams as $team)
                         <option value="{{ $team->id }}" @if(isset($courseType) && $courseType->teams->contains($team->id)) selected @endif>

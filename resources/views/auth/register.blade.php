@@ -16,7 +16,17 @@
 
             <div class="mt-4">
                 <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="email" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="birthdate" value="Geburtsdatum" />
+                <x-input id="birthdate" class="block mt-1 w-full" type="date" name="birthdate" :value="old('birthdate')" required autocomplete="date_of_birth" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="js_number" value="J&S Nummer (optional)" />
+                <x-input id="js_number" class="block mt-1 w-full" type="text" name="js_number" :value="old('js_number')" autocomplete="js_number" />
             </div>
 
             <div class="mt-4">

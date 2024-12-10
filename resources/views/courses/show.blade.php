@@ -8,7 +8,7 @@
                 <h3 class="font-semibold text-xl">{{ $course->course_nr }}</h3>
                 <table class="mt-4 w-full text-sm text-left text-gray-500">
                     <tr class="text-gray-900">
-                        <th class="text-gray-700 uppercase pr-2 py-3">Kursart</th>
+                        <th class="text-gray-700 uppercase pr-2 py-3">Kurstyp</th>
                         <td class="px-2 py-2">{{ $course->courseType->name }}</td>
                     </tr>
                     <tr class="text-gray-900">

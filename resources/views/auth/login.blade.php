@@ -11,6 +11,18 @@
                 {{ $value }}
             </div>
         @endsession
+        <div class="text-sm text-gray-600 flex items-center justify-center mt-4">
+            Noch kein Konto erstellt?
+                <a class="pl-2 underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('register') }}">
+                    {{ __('Hier registrieren') }}
+                </a>
+        </div>
+
+        <div class="text-sm text-gray-600 flex items-center justify-center mt-4">
+            oder jetzt einloggen:
+        </div>
+
+        <hr class="my-4">
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
