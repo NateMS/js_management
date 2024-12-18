@@ -29,14 +29,20 @@ Route::middleware([
     Route::middleware([CheckCourseAccess::class])->group(function() {
         Route::resource('courses', CourseController::class);
         Route::post('/courses/{course}/signup', [CourseRegistrationController::class, 'signUp'])->name('courses.signup');
-        Route::post('/courses/{course}/cancel', [CourseRegistrationController::class, 'cancel'])->name('courses.cancel');
+        Route::post('/courses/{course}/attend/{user}', [CourseRegistrationController::class, 'attend'])->name('courses.attend');
+        Route::post('/courses/{course}/cancel/{user}', [CourseRegistrationController::class, 'cancel'])->name('courses.cancel');
         Route::post('/courses/{course}/register/{user}', [CourseRegistrationController::class, 'register'])->name('courses.register');
         Route::post('/courses/{course}/change-status', [CourseRegistrationController::class, 'changeStatus'])->name('courses.change-status');
+        Route::post('/courses/{course}/delete-status', [CourseRegistrationController::class, 'deleteStatus'])->name('courses.delete-status');
     });
 
     Route::resource('course-types', CourseTypeController::class);
     
     Route::get('/team/users', [UserController::class, 'teamUsers'])->name('team.users');
+    Route::get('/team/users/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::post('/team/users/{user}', [UserController::class, 'addJSNumber'])->name('users.add_js_number');
+
+
     //Route::get('/courses/available', [CourseRegistrationController::class, 'index'])->name('courses.available');
     //Route::post('/courses/{course}/register', [CourseRegistrationController::class, 'register'])->name('courses.register');
     //Route::delete('/courses/{course}/unregister', [CourseRegistrationController::class, 'unregister'])->name('courses.unregister');

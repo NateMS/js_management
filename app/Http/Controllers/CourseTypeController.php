@@ -35,6 +35,9 @@ class CourseTypeController extends Controller
     {
         $request->merge([
             'requires_repetition' => $request->has('requires_repetition') ? true : false,
+            'can_only_attend_once' => $request->has('requires_repetition') ? true : false,
+            'is_kids_course' => $request->has('requires_repetition') ? true : false,
+
         ]);
 
         $validated = $request->validate([
@@ -43,6 +46,8 @@ class CourseTypeController extends Controller
             'minimum_age' => 'nullable|integer|min:0',
             'maximum_age' => 'nullable|integer|min:0|gte:minimum_age',
             'requires_repetition' => 'nullable|boolean',
+            'can_only_attend_once' => 'nullable|boolean',
+            'is_kids_course' => 'nullable|boolean',
             'prerequisite_course_type_id' => 'nullable|exists:course_types,id',
             'teams' => 'nullable|array',
             'teams.*' => 'exists:teams,id',
@@ -72,6 +77,8 @@ class CourseTypeController extends Controller
     {
         $request->merge([
             'requires_repetition' => $request->has('requires_repetition') ? true : false,
+            'can_only_attend_once' => $request->has('requires_repetition') ? true : false,
+            'is_kids_course' => $request->has('requires_repetition') ? true : false,
         ]);
 
         $validated = $request->validate([
@@ -80,6 +87,8 @@ class CourseTypeController extends Controller
             'minimum_age' => 'nullable|integer|min:0',
             'maximum_age' => 'nullable|integer|min:0|gte:minimum_age',
             'requires_repetition' => 'nullable|boolean',
+            'can_only_attend_once' => 'nullable|boolean',
+            'is_kids_course' => 'nullable|boolean',
             'prerequisite_course_type_id' => 'nullable|exists:course_types,id',
             'teams' => 'nullable|array',
             'teams.*' => 'exists:teams,id',

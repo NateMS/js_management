@@ -19,17 +19,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $user1 = User::updateOrCreate(
-            ['email' => 'nadim@salloum.ch'],
+            ['email' => 'owner@salloum.pm'],
             [
-                'name' => 'Nadim Salloum',
-                'email' => 'nadim@salloum.pm',
+                'name' => 'Administrator',
+                'email' => 'owner@salloum.pm',
                 'birthdate' => Carbon::parse('1995-11-27'),
                 'password' => Hash::make('abcd1234'),
             ]
         );
 
         $user2 = User::updateOrCreate(
-            ['email' => 'tester@salloum.ch'],
+            ['email' => 'tester@salloum.pm'],
             [
                 'name' => 'Adrian Volger',
                 'email' => 'tester@salloum.pm',
@@ -39,11 +39,21 @@ class DatabaseSeeder extends Seeder
         );
 
         $user3 = User::updateOrCreate(
-            ['email' => 'coach@salloum.ch'],
+            ['email' => 'coach@salloum.pm'],
             [
                 'name' => 'Anja Kaufmann',
                 'email' => 'coach@salloum.pm',
                 'is_js_coach' => true,
+                'birthdate' => Carbon::parse('1995-11-27'),
+                'password' => Hash::make('abcd1234'),
+            ]
+        );
+
+        $user4 = User::updateOrCreate(
+            ['email' => 'nadim@salloum.pm'],
+            [
+                'name' => 'Nadim Salloum',
+                'email' => 'nadim@salloum.pm',
                 'birthdate' => Carbon::parse('1995-11-27'),
                 'password' => Hash::make('abcd1234'),
             ]
@@ -65,15 +75,18 @@ class DatabaseSeeder extends Seeder
         $user2->teams()->attach($team1->id, ['role' => 'coach']);
         $user3->teams()->attach($team1->id, ['role' => 'js_manager']);
         $user3->teams()->attach($team2->id, ['role' => 'js_manager']);
+        $user4->teams()->attach($team1->id, ['role' => 'js_manager']);
 
         $user1->update(['current_team_id' => $team1->id]);
         $user2->update(['current_team_id' => $team1->id]);
         $user3->update(['current_team_id' => $team1->id]);
+        $user4->update(['current_team_id' => $team1->id]);
 
         $courseType1 = CourseType::create([
             'name' => 'Grundkurs Kutu / Getu',
             'minimum_age' => 17,
             'requires_repetition' => 1,
+            'is_kids_course' => 0,
             'can_only_attend_once' => 1,
             'order' => 1,
         ]);
@@ -85,6 +98,7 @@ class DatabaseSeeder extends Seeder
             'minimum_age' => 17,
             'order' => 2,
             'requires_repetition' => 1,
+            'is_kids_course' => 0,
             'can_only_attend_once' => 0,
             'prerequisite_course_type_id' => $courseType1->id
         ]);
@@ -96,6 +110,7 @@ class DatabaseSeeder extends Seeder
             'minimum_age' => 14,
             'maximum_age' => 18,
             'requires_repetition' => 0,
+            'is_kids_course' => 0,
             'can_only_attend_once' => 1,
             'order' => 3,
         ]);
@@ -106,6 +121,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Grundkurs / Umschulung Kids',
             'minimum_age' => 17,
             'requires_repetition' => 1,
+            'is_kids_course' => 1,
             'can_only_attend_once' => 1,
             'order' => 4,
         ]);
@@ -116,6 +132,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Aufbaukurs Kutu WB1',
             'minimum_age' => 17,
             'requires_repetition' => 1,
+            'is_kids_course' => 0,
             'can_only_attend_once' => 0,
             'prerequisite_course_type_id' => $courseType1->id,
             'order' => 5,
@@ -128,6 +145,7 @@ class DatabaseSeeder extends Seeder
             'minimum_age' => 17,
             'order' => 6,
             'requires_repetition' => 1,
+            'is_kids_course' => 0,
             'can_only_attend_once' => 0,
             'prerequisite_course_type_id' => $courseType5->id
         ]);
@@ -139,6 +157,7 @@ class DatabaseSeeder extends Seeder
             'minimum_age' => 17,
             'order' => 7,
             'requires_repetition' => 1,
+            'is_kids_course' => 1,
             'can_only_attend_once' => 0,
             'prerequisite_course_type_id' => $courseType4->id
         ]);
@@ -399,17 +418,47 @@ class DatabaseSeeder extends Seeder
             'registration_deadline' => Carbon::parse('2019-12-31'),
         ]);
 
-        $user1->courses()->attach($oldGrundkurs->id, [
+        $user2->courses()->attach($oldGrundkurs->id, [
             'status' => 'attended',
             'completed_at' => Carbon::parse('2020-01-01'),
         ]);
 
-        $user1->courses()->attach($oldKidskurs->id, [
+        $user2->courses()->attach($oldKidskurs->id, [
             'status' => 'attended',
             'completed_at' => Carbon::parse('2020-01-01'),
         ]);
 
-        $user1->courses()->attach($fk1->id, [
+        $user2->courses()->attach($fk1->id, [
+            'status' => 'attended',
+            'completed_at' => Carbon::parse('2024-02-18'),
+        ]);
+
+        $user3->courses()->attach($oldGrundkurs->id, [
+            'status' => 'attended',
+            'completed_at' => Carbon::parse('2020-01-01'),
+        ]);
+
+        $user3->courses()->attach($oldKidskurs->id, [
+            'status' => 'attended',
+            'completed_at' => Carbon::parse('2020-01-01'),
+        ]);
+
+        $user3->courses()->attach($fk1->id, [
+            'status' => 'attended',
+            'completed_at' => Carbon::parse('2024-02-18'),
+        ]);
+
+        $user4->courses()->attach($oldGrundkurs->id, [
+            'status' => 'attended',
+            'completed_at' => Carbon::parse('2020-01-01'),
+        ]);
+
+        $user4->courses()->attach($oldKidskurs->id, [
+            'status' => 'attended',
+            'completed_at' => Carbon::parse('2020-01-01'),
+        ]);
+
+        $user4->courses()->attach($fk1->id, [
             'status' => 'attended',
             'completed_at' => Carbon::parse('2024-02-18'),
         ]);

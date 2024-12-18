@@ -75,6 +75,38 @@ class CourseRegistrationController extends Controller
         }
     }
 
+    public function attend(Request $request, Course $course, User $user)
+    {
+        $currUser = auth()->user();
+        $currentTeam = $currUser->currentTeam;
+        if (!$currUser->isJSCoach() && !($currUser->isJSVerantwortlich() && $currentTeam->users->contains($user)) && $currUser->id != $user->id) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Status zu ändern.');
+        }
+
+        if (!$course->isInPast()) {
+            return redirect()->back()->with('error', 'Du kannst nicht an einem Kurs teilgenommen haben, wenn der Kurs noch nicht abgeschlossen ist.');
+        }
+        try {
+            DB::transaction(function () use ($user, $course) {
+                if ($user->courses()->where('course_id', $course->id)->exists()) {
+                    $user->courses()->updateExistingPivot($course->id, [
+                        'status' => 'attended',
+                        'completed_at' => now()
+                    ]);
+                } else {
+                    $user->courses()->attach($course->id, [
+                        'status' => 'attended',
+                        'completed_at' => now()
+                    ]);
+                }
+            });
+    
+            return redirect()->back()->with('success', $currUser->id != $user->id ? $user->name . ' hat an diesem Kurs teilgenommen.' : 'Du hast die Teilnahme für diesen Kurs bestätigt!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Es ist ein Fehler aufgetreten');
+        }
+    }
+
     public function changeStatus(Request $request, Course $course)
     {
 
@@ -118,34 +150,52 @@ class CourseRegistrationController extends Controller
         }
     }
 
-    public function cancel(Request $request, Course $course)
+    public function cancel(Request $request, Course $course, User $user)
     {
-        $user = auth()->user();
+        $currUser = auth()->user();
+        $currentTeam = $currUser->currentTeam;
+        if (!$currUser->isJSCoach() && !($currUser->isJSVerantwortlich() && $currentTeam->users->contains($user)) && $currUser->id != $user->id) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Status zu ändern.');
+        }
+
+        if (!$course->isInPast()) {
+            return redirect()->back()->with('error', 'Du kannst diesen Status nicht ändern, wenn der Kurs noch nicht abgeschlossen ist.');
+        }
 
         try {
             DB::transaction(function () use ($user, $course) {
-                // Find the pivot record
-                $pivotRecord = DB::table('course_user')
-                    ->where('user_id', $user->id)
-                    ->where('course_id', $course->id)
-                    ->where('status', 'signed_up')
-                    ->first();
-
-                if ($pivotRecord) {
-                    // Update status to cancelled
-                    DB::table('course_user')
-                        ->where('user_id', $user->id)
-                        ->where('course_id', $course->id)
-                        ->update([
-                            'status' => 'cancelled',
-                            'cancelled_at' => now()
-                        ]);
+                if ($user->courses()->where('course_id', $course->id)->exists()) {
+                    $user->courses()->updateExistingPivot($course->id, [
+                        'status' => 'cancelled',
+                        'cancelled_at' => now()
+                    ]);
+                } else {
+                    $user->courses()->attach($course->id, [
+                        'status' => 'cancelled',
+                        'cancelled_at' => now()
+                    ]);
                 }
             });
-
-            return redirect()->back()->with('success', 'Du hast dich für diesen Kurs ausgetragen.');
+    
+            return redirect()->back()->with('success', $currUser->id != $user->id ? $user->name . ' hat an diesem Kurs nicht teilgenommen.' : 'Du hast an diesem Kurs nicht teilgenommen!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Es gab einen Fehler beim Austragen für diesen Kurs.');
+            return redirect()->back()->with('error', 'Es ist ein Fehler aufgetreten');
+        }
+    }
+
+    public function deleteStatus(Request $request, Course $course)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+
+        try {
+            $course->users()->detach($user->id);
+            return redirect()->back()->with('success', "{$user->name}' wurde aus diesem Kurs entfernt.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Es gab einen Fehler beim Löschen.');
         }
     }
 }

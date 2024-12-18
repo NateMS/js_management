@@ -18,11 +18,21 @@ class CourseController extends Controller
             ->passesAgeRequirement()
             ->registrationDeadlineNotPassed()
             ->fullfillsCourseTypePrerequisite()
-            ->withUserStatus()
+            ->withoutUser()
             ->get();
 
-        $lastAttended = collect([auth()->user()->getCoursesByStatus('attended')->last()])->filter();
-        return view('courses.available', compact('courses', 'lastAttended', 'validityDate'));
+        $lastAttended = auth()->user()->getCoursesByStatus('attended')->last() ?? null;
+        $plannedCourses = auth()->user()
+            ->courses()
+            ->futureCourses()
+            ->whereIn('course_user.status', ['signed_up', 'registered'])
+            ->get();
+        $pastCourses = auth()->user()
+            ->courses()
+            ->pastCourses()
+            ->whereIn('course_user.status', ['signed_up', 'registered'])
+            ->get();
+        return view('courses.available', compact('courses', 'lastAttended', 'validityDate', 'plannedCourses', 'pastCourses'));
     }
 
     public function myCourses()
@@ -60,9 +70,6 @@ class CourseController extends Controller
         return view('courses.index', compact('courses', 'years', 'selectedYear'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $user = auth()->user();
@@ -80,9 +87,6 @@ class CourseController extends Controller
         return view('courses.create', compact('courseTypes'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $user = auth()->user();
@@ -101,7 +105,7 @@ class CourseController extends Controller
             'course_type_id' => [
                 'required',
                 'exists:course_types,id',
-                Rule::in($user->isJSCoach() ? [] : $courseTypeIds), // Skip `in` rule for JSCoach
+                Rule::in($user->isJSCoach() ? CourseType::all()->pluck('id')->toArray() : $courseTypeIds),
             ],
             'location' => 'required|string|max:255',
             'date_start' => 'required|date|before_or_equal:date_end',
@@ -117,13 +121,15 @@ class CourseController extends Controller
         return redirect()->route('courses.index')->with('success', 'Kurs erstellt.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Course $course)
     {
+        
         $user = auth()->user();
         
+        if (!$user->canAccessCourse($course)) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs anzuschauen.');    
+        }
+
         $users = $course->users;
 
         $userStatus = $course->users()
@@ -137,16 +143,11 @@ class CourseController extends Controller
         return view('courses.show', compact('course', 'users', 'userStatus', 'availableUsers', 'currentTeamUsers'));
     }
 
-
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Course $course)
     {
         $user = auth()->user();
         $currentTeam = $user->currentTeam;
-        if (!$user->isJSVerantwortlich()) {
+        if (!$user->canEditCourse($course)) {
             return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs zu bearbeiten.');
         }
 
@@ -160,14 +161,11 @@ class CourseController extends Controller
         return view('courses.edit', compact('course', 'courseTypes'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Course $course)
     {
         $user = auth()->user();
         $currentTeam = $user->currentTeam;
-        if (!$user->isJSVerantwortlich()) {
+        if (!$user->canEditCourse($course)) {
             return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs zu bearbeiten.');
         }
 
@@ -181,7 +179,7 @@ class CourseController extends Controller
             'course_type_id' => [
                 'required',
                 'exists:course_types,id',
-                Rule::in($user->isJSCoach() ? [] : $courseTypeIds),
+                Rule::in($user->isJSCoach() ? CourseType::all()->pluck('id')->toArray() : $courseTypeIds),
             ],
             'location' => 'required|string|max:255',
             'date_start' => 'required|date|before_or_equal:date_end',

@@ -39,8 +39,33 @@
                     class="mt-1 block" 
                     :checked="old('requires_repetition', $courseType->requires_repetition) ? true : false" 
                 />
-
                 @error('requires_repetition')
+                    <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <x-label for="can_only_attend_once" value="Kursart kann nur einmal besucht werden?" />
+                <x-input 
+                    type="checkbox" 
+                    name="can_only_attend_once" 
+                    id="can_only_attend_once" 
+                    class="mt-1 block" 
+                    :checked="old('can_only_attend_once', $courseType->can_only_attend_once) ? true : false" 
+                />
+                @error('can_only_attend_once')
+                    <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <x-label for="is_kids_course" value="Kurs für Kinder (5 - 10 Jahre)?" />
+                <x-input 
+                    type="checkbox" 
+                    name="is_kids_course" 
+                    id="is_kids_course" 
+                    class="mt-1 block" 
+                    :checked="old('is_kids_course', $courseType->is_kids_course) ? true : false" 
+                />
+                @error('is_kids_course')
                     <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
                 @enderror
             </div>

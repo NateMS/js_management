@@ -25,7 +25,25 @@
                         <td class="px-6 py-4">{{ $course->formatted_date_range }} ({{ $course->duration }})</td>
                         <!-- <td class="px-6 py-4">{{ $course->registration_deadline->format('d.m.Y') }}</td> -->
                         <td class="px-6 py-4">{{ $course->participation_number }}</td>
-                        @if ($status)
+                        @if ($status && $course->isInPast() && $course->userStatus->status == 'registered')
+                            <td class="px-6 py-4">
+                                Teilgenommen:
+                                <span class="flex">
+                                    <form action="{{ route('courses.attend', [$course, auth()->user()]) }}" method="POST">
+                                        @csrf
+                                        <x-button type="submit" class="px-4 py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                            Ja
+                                        </x-button>
+                                    </form>
+                                    <form action="{{ route('courses.cancel', [$course, auth()->user()]) }}" method="POST" class="ml-2">
+                                        @csrf
+                                        <x-button type="submit" class="px-4 py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                            nein
+                                        </x-button>
+                                    </form>
+                                </span>
+                            </td>    
+                        @elseif ($status)
                             <td class="px-6 py-4">
                                 @if($course->userStatus)
                                     {{ $course->userStatus->formatted_status  }}

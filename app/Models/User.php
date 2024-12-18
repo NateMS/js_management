@@ -119,6 +119,28 @@ class User extends Authenticatable
         return $this->ownsTeam($team) || $this->hasTeamPermission($team, 'manageMembers');
     }
 
+    public function canEditCourse(Course $course) : bool
+    {
+        if ($this->isJSCoach()) {
+            return true;
+        }
+
+        if (!$this->isJSVerantwortlich()) {
+            return false;
+        }
+
+        return $course->courseType->teams->contains('id', $this->currentTeam->id);
+    }
+
+    public function canAccessCourse(Course $course) : bool
+    {
+        if ($this->isJSCoach()) {
+            return true;
+        }
+
+        return $course->courseType->teams->contains('id', $this->currentTeam->id);
+    }
+
     public function getCourseRevalidationDate()
     {   
         $course = $this->courses()
@@ -156,4 +178,20 @@ class User extends Authenticatable
         }
         return false;
     }
+
+    public function scopeExcludeOwners($query, Team $team)
+    {
+        return $query->where('user_id', '!=', $team->user_id);
+    }
+
+    public function hasAttendedKidsCourse()
+    {
+        return $this->courses()
+            ->where('course_user.status', 'attended')
+            ->whereHas('courseType', function ($query) {
+                $query->where('is_kids_course', true);
+            })
+            ->exists();
+    }
+
 }

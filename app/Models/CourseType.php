@@ -13,6 +13,7 @@ class CourseType extends Model
         'maximum_age',
         'prerequisite_course_type_id',
         'can_only_attend_once',
+        'is_kids_course',
         'requires_repetition',
     ];
 

@@ -68,6 +68,11 @@ class Course extends Model
         return $this->users()->count();
     }
 
+    public function isInPast() : bool
+    {
+        return $this->date_start <= now();
+    }
+
     public function scopeRegistrationDeadlineNotPassed($query)
     {
         return $query->where('registration_deadline', '>=', now());
@@ -160,6 +165,24 @@ class Course extends Model
             $query->where('user_id', $userId)
                 ->select('course_id', 'status', 'user_id');
         }]);
+    }
+
+    public function scopeWithoutUser($query, $userId = null)
+    {
+        $userId = $userId ?? auth()->id();
+        return $query->whereDoesntHave('users', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        });
+    }
+
+    public function scopePastCourses($query)
+    {
+        return $query->where('date_start', '<=', now());
+    }
+
+    public function scopeFutureCourses($query)
+    {
+        return $query->where('date_start', '>', now());
     }
 
     public function userStatus()

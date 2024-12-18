@@ -3,15 +3,96 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Course;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
     public function teamUsers()
     {
         $currentTeam = auth()->user()->currentTeam;
-        $users = $currentTeam->users;
 
-        return view('users.team', compact('users'));
+        if (!$currentTeam) {
+            redirect()->back();
+        }
+
+        $users = $currentTeam->users()->excludeOwners(auth()->user()->currentTeam)->get();
+
+        $past = collect([]);
+        $soon = collect([]);
+        $future = collect([]);
+        $none = collect([]);
+
+        foreach ($users as $user) {
+            $revalidationDate = $user->getCourseRevalidationDate();
+
+            if (!$revalidationDate) {
+                $none->push($user);
+                continue;
+            }
+
+            $revalidationDate = Carbon::createFromFormat('d.m.Y', $revalidationDate);
+
+            if ($revalidationDate->isPast()) {
+                $past->push($user);
+                continue;
+            }
+            
+            if ($revalidationDate->isBetween(now(), now()->addMonths(18))) {
+                $soon->push($user);
+            } else {
+                $future->push($user);
+            }
+        }
+
+        $past = $past->sortBy('birthdate');
+        $soon = $soon->sortBy('birthdate');
+        $future = $future->sortBy('birthdate');
+        $none = $none->sortBy('birthdate');
+
+        return view('users.team', compact('past', 'soon', 'future', 'none'));
+    }
+
+    public function show(User $user)
+    {
+        $currUser = auth()->user();
+        $currentTeam = $currUser->currentTeam;
+        if (!$currUser->isJSCoach() && !$currentTeam->users->contains($user)) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, diesen Benutzer anzuschauen.');
+        }
+
+        $validityDate = $user->getCourseRevalidationDate();
+
+        $planned = $user
+            ->courses()
+            ->notHidden()
+            ->futureCourses()
+            ->whereIn('course_user.status', ['signed_up', 'registered'])
+            ->get();
+        $past = $user
+            ->courses()
+            ->notHidden()
+            ->pastCourses()
+            ->get();
+        return view('users.show', compact('user', 'validityDate', 'planned', 'past'));
+    }
+
+    public function addJSNumber(Request $request, User $user)
+    {
+        $currUser = auth()->user();
+        $currentTeam = $currUser->currentTeam;
+        if (!$currUser->isJSCoach() && !($currUser->isJSVerantwortlich() && $currentTeam->users->contains($user)) && $currUser->id != $user->id) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, diesen Benutzer zu bearbeiten.');
+        }
+
+        $request->validate([
+            'js_number' => 'nullable|string|max:255',
+        ]);
+
+        $user->update($request->all());
+
+        
+        return redirect()->route('users.show', $user)->with('success', 'J&S Nummer angepasst');
     }
 }
