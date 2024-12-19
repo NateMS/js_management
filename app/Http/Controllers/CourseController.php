@@ -11,6 +11,16 @@ class CourseController extends Controller
 {
     public function availableCourses()
     {
+        $user = auth()->user();
+        if ($user->allTeams()->count() > 0) {
+            if ($user->current_team_id == null) {
+                $user->current_team_id = $user->allTeams()->first()->id;
+                $user->save();
+            }
+        } else {
+            return view('welcome');
+        }
+
         $validityDate = auth()->user()->getCourseRevalidationDate();
 
         $courses = Course::with('courseType')
@@ -56,9 +66,9 @@ class CourseController extends Controller
     {
         $user = auth()->user();
         if (!$user->isJSVerantwortlich()) {
-            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um die Kursverwaltung anzuschauen.');
+            abort(404);
         }
-        $years = \App\Models\Course::query()
+        $years = Course::query()
             ->selectRaw('strftime("%Y", date_start) as year')
             ->distinct()
             ->orderBy('year', 'desc')
@@ -75,7 +85,7 @@ class CourseController extends Controller
         $user = auth()->user();
         $currentTeam = $user->currentTeam;
         if (!$user->isJSVerantwortlich()) {
-            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um einen Kurs zu erstellen.');
+            abort(404);
         }
         if ($user->isJsCoach()) {
             $courseTypes = CourseType::all();
@@ -127,7 +137,7 @@ class CourseController extends Controller
         $user = auth()->user();
         
         if (!$user->canAccessCourse($course)) {
-            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs anzuschauen.');    
+            abort(404);
         }
 
         $users = $course->users;
@@ -148,7 +158,7 @@ class CourseController extends Controller
         $user = auth()->user();
         $currentTeam = $user->currentTeam;
         if (!$user->canEditCourse($course)) {
-            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Kurs zu bearbeiten.');
+            abort(404);
         }
 
         if ($user->isJsCoach()) {
@@ -197,17 +207,116 @@ class CourseController extends Controller
 
     public function listSignedUpUsers()
     {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+
+        if (!$user->isJSVerantwortlich()) {
+            abort(404);
+        }
         $courses = Course::whereHas('users', function ($query) {
             $query->where('course_user.status', 'signed_up');
         })
         ->with(['users' => function ($query) {
             $query->where('course_user.status', 'signed_up');
         }])
+        ->orderBy('date_start', 'asc')
         ->get();
 
-        return view('courses.signed_up', compact('courses'));
+        $title = 'Eingetragene Kurse';
+        return view('courses.by_status', compact('courses', 'title'));
     }
 
+    public function listRegisteredUsers()
+    {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+
+        if (!$user->isJSVerantwortlich()) {
+            abort(404);
+        }
+        $courses = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'registered');
+        })
+        ->with(['users' => function ($query) {
+            $query->where('course_user.status', 'registered');
+        }])
+        ->orderBy('date_start', 'asc')
+        ->get();
+
+        $title = 'Angemeldete Kurse';
+        return view('courses.by_status', compact('courses', 'title'));
+    }
+
+    public function listAttendedUsers(Request $request)
+    {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+
+        if (!$user->isJSVerantwortlich()) {
+            abort(404);
+        }
+        $years = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'attended');
+        })
+        ->selectRaw('strftime("%Y", date_start) as year')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
+        
+        $selectedYear = $years ? $request->input('year', $years->first()) : '';
+
+        $courseQuery = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'attended');
+        })
+        ->with(['users' => function ($query) {
+            $query->where('course_user.status', 'attended');
+        }]);
+    
+        if ($selectedYear) {
+            $courseQuery->whereRaw('strftime("%Y", date_start) = ?', [$selectedYear]);
+        }
+    
+        $courses = $courseQuery->orderBy('date_start', 'asc')->get();
+
+        $title = 'Teilgenommene Kurse';
+
+        return view('courses.by_status', compact('courses', 'title', 'years', 'selectedYear'));
+    }
+
+    public function listCancelledUsers(Request $request)
+    {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+
+        if (!$user->isJSVerantwortlich()) {
+            abort(404);
+        }
+        $years = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'cancelled');
+        })
+        ->selectRaw('strftime("%Y", date_start) as year')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
+        
+        $selectedYear = $years ? $request->input('year', $years->first()) : '';
+
+        $courseQuery = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'cancelled');
+        })
+        ->with(['users' => function ($query) {
+            $query->where('course_user.status', 'cancelled');
+        }]);
+    
+        if ($selectedYear) {
+            $courseQuery->whereRaw('strftime("%Y", date_start) = ?', [$selectedYear]);
+        }
+    
+        $courses = $courseQuery->orderBy('date_start', 'asc')->get();
+
+        $title = 'Abgesagte Kurse';
+        return view('courses.by_status', compact('courses', 'title', 'years', 'selectedYear'));
+    }
 
     public function destroy(Course $course)
     {

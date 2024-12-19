@@ -6,7 +6,7 @@
         @if($validityDate)
             <x-content-view>
                 <h2 class="text-center text-xl font-bold text-gray-800 mb-2">Leiterlizenz ist gültig bis</h2>
-                <h3 class="text-center text-2xl font-bold text-gray-800 mb-4">{{ $validityDate }}</h3>
+                <h3 class="text-center text-2xl font-bold {{ auth()->user()->getRevalidationColorClass() }} mb-4">{{ $validityDate }}</h3>
             </x-content-view>
         @endif
 
@@ -14,9 +14,8 @@
             <x-content-view>
                 <h1 class="text-2xl font-bold text-gray-800 mb-4">Vergangene Kurse</h1>
                 <p>Bitte bestätige, ob du an diesem Kurs teilgenommen hast.</p>
-                @foreach ($pastCourses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
-                    <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
-                    <x-simple-course-table :courses="$coursesForType" status="true" />                                   
+                @foreach ($pastCourses as $course)
+                    <x-simple-course-table :course="$course" :user="auth()->user()" status="true" />                                   
                 @endforeach
             </x-content-view>
         @endif
@@ -24,7 +23,7 @@
         @if($lastAttended)
             <x-content-view>
                 <h2 class="text-l font-semibold text-gray-700 mb-1">Zuletzt besuchter Kurs:</h2>
-                <x-simple-course-table :course="$lastAttended" />
+                <x-simple-course-table :course="$lastAttended" :user="auth()->user()" />
                 <div class="mb-4"></div>
             </x-content-view>
         @endif
@@ -34,7 +33,7 @@
                 <h1 class="text-2xl font-bold text-gray-800 mb-4">Geplante Kurse</h1>
                 @foreach ($plannedCourses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                     <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
-                    <x-simple-course-table :courses="$coursesForType" status="true" />                                   
+                    <x-simple-course-table :courses="$coursesForType" :user="auth()->user()" status="true" />                                   
                 @endforeach
             </x-content-view>
         @endif
@@ -48,7 +47,7 @@
                 <h1 class="text-2xl font-bold text-gray-800 mb-4">Verfügbare Kurse</h1>
                 @foreach ($courses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                     <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
-                    <x-simple-course-table :courses="$coursesForType" status="true" />                                   
+                    <x-simple-course-table :courses="$coursesForType" :user="auth()->user()" status="true" />                                   
                 @endforeach
             </x-content-view>
         @endif

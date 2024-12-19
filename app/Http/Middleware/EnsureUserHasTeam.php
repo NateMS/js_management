@@ -24,6 +24,6 @@ class EnsureUserHasTeam
             return $next($request);
         }
         
-        return redirect('/dashboard');
+        return redirect()->route('home');
     }
 }

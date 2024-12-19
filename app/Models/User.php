@@ -68,7 +68,18 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birthdate' => 'date:Y-m-d',
         ];
+    }
+
+    public static function getJSCoachMail()
+    {
+        $admin = User::where('is_js_coach', true)->first();
+
+        if ($admin) {
+            return $admin->email;
+        }
+        return env('MAIL_RECIPIENT');
     }
 
     public function courses()
@@ -184,6 +195,21 @@ class User extends Authenticatable
         return $query->where('user_id', '!=', $team->user_id);
     }
 
+    public function scopeWithTeams($query)
+    {
+        return $query->whereHas('teams');
+    }
+
+    public function scopeAged18OrOlder($query)
+    {
+        $query->where('birthdate', '<=', Carbon::now()->subYears(18)->toDateString());
+    }
+
+    public function scopeAgedUnder18($query)
+    {
+        $query->where('birthdate', '>', Carbon::now()->subYears(18)->toDateString());
+    }
+
     public function hasAttendedKidsCourse()
     {
         return $this->courses()
@@ -192,6 +218,35 @@ class User extends Authenticatable
                 $query->where('is_kids_course', true);
             })
             ->exists();
+    }
+
+    public function hasAttendedUnder18Course()
+    {
+        return $this->courses()
+            ->where('course_user.status', 'attended')
+            ->whereHas('courseType', function ($query) {
+                $query->where('maximum_age', '<=', 18);
+            })
+            ->exists();
+    }
+
+    public function getRevalidationColorClass()
+    {
+        $revalidationDate = Carbon::parse($this->getCourseRevalidationDate());
+
+        if (!$revalidationDate) {
+            return '';
+        }
+
+        if ($revalidationDate->isPast()) {
+            return 'text-red-800';
+        }
+        
+        if ($revalidationDate->isBetween(now(), now()->addMonths(18))) {
+            return 'text-yellow-600';
+        }
+        
+        return 'text-green-700';
     }
 
 }

@@ -1,6 +1,6 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
@@ -11,35 +11,86 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden lg:space-x-6 md:space-x-1 md:-my-px lg:ms-10 ms-1 md:flex">
                     <x-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
                         Home
                     </x-nav-link>
                     <x-nav-link href="{{ route('courses.my-courses') }}" :active="request()->routeIs('courses.my-courses')">
-                        {{ __('Meine Kurse') }}
+                        Meine Kurse
                     </x-nav-link>
-                    @if(Auth()->user()->isJSVerantwortlich())
-                    <x-nav-link href="{{ route('courses.index') }}" :active="request()->routeIs('courses.index')">
-                        {{ __('Kursverwaltung') }}
-                    </x-nav-link>
-                    @endif
-                    @if(Auth()->user()->isJSCoach())
-                        <x-nav-link href="{{ route('course-types.index') }}" :active="request()->routeIs('course-types.index')">
-                            {{ __('Kurstypen') }}
-                        </x-nav-link>
-                    @endif
-                    @if(Auth()->user()->isJSCoach())
-                        <x-nav-link href="{{ route('courses.signed_up') }}" :active="request()->routeIs('courses.signed_up')">
-                            {{ __('Eingetragene') }}
-                        </x-nav-link>
-                    @endif
                     <x-nav-link href="{{ route('team.users') }}" :active="request()->routeIs('team.users')">
-                        {{ __('Leiter') }}
+                        Leiter
                     </x-nav-link>
+
+                    @if(Auth()->user()->isJSVerantwortlich())
+                        <div class="hidden sm:flex sm:items-center">
+                            <x-dropdown align="right" width="60">
+                                <x-slot name="trigger">
+                                    <span class="inline-flex rounded-md">
+                                        <button type="button" class="inline-flex items-center p-1 py-4 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                            J&S Admin
+                                            <svg class="ms-2 -me-0.5 size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </x-slot>
+
+                                <x-slot name="content">
+                                    <!-- Account Management -->
+                                    <div class="block px-4 py-2 text-xs text-gray-400">
+                                        Kursverwaltung
+                                    </div>
+
+                                    <x-dropdown-link href="{{ route('courses.index') }}" class="{{ request()->routeIs('courses.index') ? 'bg-gray-100 font-bold' : ''}}">
+                                        Alle Kurse
+                                    </x-dropdown-link>
+
+                                    <x-dropdown-link href="{{ route('courses.create') }}" class="{{ request()->routeIs('courses.create') ? 'bg-gray-100 font-bold' : ''}}">
+                                        ➕ Kurs erfassen
+                                    </x-dropdown-link>
+
+                                    <div class="block px-4 py-2 text-xs text-gray-400">
+                                        Kursteilnehmer
+                                    </div>
+
+                                    <x-dropdown-link href="{{ route('courses.signed_up') }}" class="{{ request()->routeIs('courses.signed_up') ? 'bg-gray-100 font-bold' : ''}}">
+                                        ⌛ Eingetragen
+                                    </x-dropdown-link>
+
+                                    <x-dropdown-link href="{{ route('courses.registered') }}" class="{{ request()->routeIs('courses.registered') ? 'bg-gray-100 font-bold' : ''}}">
+                                        ✔️ Angemeldet
+                                    </x-dropdown-link>
+
+                                    <x-dropdown-link href="{{ route('courses.attended') }}" class="{{ request()->routeIs('courses.attended') ? 'bg-gray-100 font-bold' : ''}}">
+                                        ✅ Teilgenommen
+                                    </x-dropdown-link>
+
+                                    <x-dropdown-link href="{{ route('courses.cancelled') }}" class="{{ request()->routeIs('courses.cancelled') ? 'bg-gray-100 font-bold' : ''}}">
+                                        ❌ Abgesagt
+                                    </x-dropdown-link>
+
+                                    @if(Auth()->user()->isJSCoach())
+                                        <div class="block px-4 py-2 text-xs text-gray-400">
+                                            Kurstypen
+                                        </div>
+
+                                        <x-dropdown-link href="{{ route('course-types.index') }}" class="{{ request()->routeIs('course-types.index') ? 'bg-gray-100 font-bold' : ''}}">
+                                            Alle Kurstypen
+                                        </x-dropdown-link>
+
+                                        <x-dropdown-link href="{{ route('course-types.create') }}" class="{{ request()->routeIs('course-types.create') ? 'bg-gray-100 font-bold' : ''}}">
+                                            ➕ Kurstyp erfassen
+                                        </x-dropdown-link>
+                                    @endif
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
                 </div>
             </div>
-
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            
+            <div class="hidden md:flex md:items-center lg:ms-6 ms-1">
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ms-3 relative">
@@ -81,7 +132,7 @@
                                             <div class="border-t border-gray-200"></div>
 
                                             <div class="block px-4 py-2 text-xs text-gray-400">
-                                                {{ __('Switch Teams') }}
+                                                Riege wechseln
                                             </div>
 
                                             @foreach (Auth::user()->allTeams() as $team)
@@ -153,7 +204,7 @@
             </div>
 
             <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
+            <div class="-me-2 flex items-center md:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="size-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -165,15 +216,60 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden">
+        <div class="pt-1 space-y-1">
             <x-responsive-nav-link href="{{ route('home') }}" :active="request()->routeIs('home')">
-                {{ __('Home') }}
+                Home
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('courses.my-courses') }}" :active="request()->routeIs('courses.my-courses')">
+                Meine Kurse
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('team.users') }}" :active="request()->routeIs('team.users')">
+                Leiter
             </x-responsive-nav-link>
         </div>
 
+        @if(Auth()->user()->isJSVerantwortlich())
+            <div class="border-t border-gray-200 pb-1">
+                <div class="block px-4 py-2 text-xs text-gray-400">
+                    J&S Admin
+                </div>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.index') }}" :active="request()->routeIs('courses.index')">
+                    Alle Kurse
+                </x-responsive-nav-link>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.create') }}" :active="request()->routeIs('courses.create')">
+                    ➕ Kurs erfassen
+                </x-responsive-nav-link>
+                <div class="block px-4 pt-2 pb-1 text-xs text-gray-400">
+                    Kursteilnehmer
+                </div>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.signed_up') }}" :active="request()->routeIs('courses.signed_up')">
+                    ⌛ Eingetragen
+                </x-responsive-nav-link>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.registered') }}" :active="request()->routeIs('courses.registered')">
+                    ✔️ Angemeldet
+                </x-responsive-nav-link>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.attended') }}" :active="request()->routeIs('courses.attended')">
+                    ✅ Teilgenommen
+                </x-responsive-nav-link>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.cancelled') }}" :active="request()->routeIs('courses.cancelled')">
+                    ❌ Abgesagt
+                </x-responsive-nav-link>
+                @if(Auth()->user()->isJSCoach())
+                    <div class="block px-4 py-2 text-xs text-gray-400">
+                        Kurstypen
+                    </div>
+                    <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('course-types.index') }}" :active="request()->routeIs('course-types.index')">
+                        Alle Kurstypen
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('course-types.index') }}" :active="request()->routeIs('course-types.index')">
+                        ➕ Kurstyp erfassen
+                    </x-responsive-nav-link>
+                @endif
+            </div>
+        @endif
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-1 pb-1 border-t border-gray-200">
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <div class="shrink-0 me-3">
@@ -187,7 +283,7 @@
                 </div>
             </div>
 
-            <div class="mt-3 space-y-1">
+            <div>
                 <!-- Account Management -->
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
                     {{ __('Profile') }}
@@ -199,24 +295,8 @@
                     </x-responsive-nav-link>
                 @endif
 
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}" x-data>
-                    @csrf
-
-                    <x-responsive-nav-link href="{{ route('logout') }}"
-                                   @click.prevent="$root.submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
-                </form>
-
                 <!-- Team Management -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
-                    <div class="border-t border-gray-200"></div>
-
-                    <div class="block px-4 py-2 text-xs text-gray-400">
-                        {{ __('Manage Team') }}
-                    </div>
-
+                @if (Auth::user()->canManageTeamMembers(Auth::user()->currentTeam))
                     <!-- Team Settings -->
                     <x-responsive-nav-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" :active="request()->routeIs('teams.show')">
                         {{ __('Team Settings') }}
@@ -227,20 +307,36 @@
                             {{ __('Create New Team') }}
                         </x-responsive-nav-link>
                     @endcan
-
-                    <!-- Team Switcher -->
-                    @if (Auth::user()->allTeams()->count() > 1)
-                        <div class="border-t border-gray-200"></div>
-
-                        <div class="block px-4 py-2 text-xs text-gray-400">
-                            {{ __('Switch Teams') }}
-                        </div>
-
-                        @foreach (Auth::user()->allTeams() as $team)
-                            <x-switchable-team :team="$team" component="responsive-nav-link" />
-                        @endforeach
-                    @endif
                 @endif
+                <!-- Team Switcher -->
+                @if (Auth::user()->allTeams()->count() > 1)
+                    <div class="border-t border-gray-200"></div>
+
+                    <div class="block px-4 py-2 text-xs text-gray-400">
+                        Riege wechseln
+                    </div>
+
+                    @foreach (Auth::user()->allTeams() as $team)
+                        <x-switchable-team :team="$team" component="responsive-nav-link" />
+                    @endforeach
+                @else
+                    <div class="block px-4 py-2 text-xs text-gray-400">
+                        {{ Auth::user()->currentTeam->name }}
+                    </div>
+                @endif
+
+                <div class="border-t border-gray-200"></div>
+                <!-- Authentication -->
+                <form method="POST" action="{{ route('logout') }}" x-data>
+                    @csrf
+
+                    <x-responsive-nav-link href="{{ route('logout') }}"
+                                   @click.prevent="$root.submit();">
+                        {{ __('Log Out') }}
+                    </x-responsive-nav-link>
+                </form>
+
+                
             </div>
         </div>
     </div>

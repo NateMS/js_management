@@ -7,12 +7,13 @@ use App\Models\User;
 use App\Models\CourseUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NewSignUpEmail;
 
 class CourseRegistrationController extends Controller
 {
-    public function signUp(Request $request, Course $course)
+    public function signUp(Request $request, Course $course, User $user)
     {
-        $user = auth()->user();
         if (!$course->isRegistrationOpen()) {
             throw new \Exception('Registration is closed for this course.');
         }
@@ -40,6 +41,10 @@ class CourseRegistrationController extends Controller
                     ]);
                 }
             });
+
+            if (!auth()->user()->isJSCoach()) {
+                Mail::to(User::getJSCoachMail())->send(new NewSignUpEmail($course, $user));
+            }
     
             return redirect()->back()->with('success', 'Du hast dich eingetragen. Der J&S Coach wird per E-Mail informiert.');
         } catch (\Exception $e) {
@@ -52,6 +57,10 @@ class CourseRegistrationController extends Controller
         $currUser = auth()->user();
         if (!$currUser->isJSCoach()) {
             return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Status zu ändern.');
+        }
+
+        if ($course->isInPast()) {
+            return redirect()->back()->with('error', 'Du kannst keine Anmeldung für Kurse in der Vergangenheit durchführen.');
         }
         try {
             DB::transaction(function () use ($user, $course) {
@@ -127,6 +136,10 @@ class CourseRegistrationController extends Controller
 
         if (!$currUser->isJsCoach() && $validated['status'] == 'registered') {
             return redirect()->back()->with('error', 'Nur ein J&S Coach kann einen Leiter anmelden.');
+        }
+
+        if ($validated['status'] == 'attended' && $course->isInPast()) {
+            return redirect()->back()->with('error', 'Teilnahme kann nicht vor Kursbeginn bestätigt werden.');
         }
 
         try {

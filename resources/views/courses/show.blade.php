@@ -2,51 +2,51 @@
     <x-slot name="header">
         <x-header>{{ $course->courseType->name }} {{ $course->course_nr ? '(' . $course->course_nr . ')' : "Kurs" }}</x-header>
     </x-slot>
-    <div class="max-w-7xl mx-auto md:grid md:grid-cols-7 md:gap-4">
-        <div class="md:col-span-3">
+    <div class="max-w-7xl mx-auto lg:grid lg:grid-cols-7 lg:gap-4">
+        <div class="lg:col-span-3">
             <x-content-view>  
                 <h3 class="font-semibold text-xl">📋 Kursdetails</h3>
-                <table class="mt-4 w-full text-sm text-left text-gray-500">
+                <table class="mt-4 w-full text-sm md:text-md text-left text-gray-500">
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">Kurstyp</th>
-                        <td class="px-2 py-2">{{ $course->courseType->name }}</td>
+                        <td class="px-1 py-1 md:px-2 py-2">{{ $course->courseType->name }}</td>
                     </tr>
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">Kursnummer</th>
-                        <td class="px-2 py-2">{{ $course->course_nr }}</td>
+                        <td class="px-1 py-1 md:px-2 py-2">{{ $course->course_nr }}</td>
                     </tr>
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">Name</th>
-                        <td class="px-2 py-2">{{ $course->name }}</td>
+                        <td class="px-1 py-1 md:px-2 py-2">{{ $course->name }}</td>
                     </tr>
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">Ort</th>
-                        <td class="px-2 py-2">{{ $course->location }}</td>
+                        <td class="px-1 py-1 md:px-2 py-2">{{ $course->location }}</td>
                     </tr>
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">Datum</th>
-                        <td class="px-2 py-2">{{ $course->formatted_date_range }} ({{ $course->duration }})</td>
+                        <td class="px-1 py-1 md:px-2 py-2">{{ $course->formatted_date_range }}{{ $course->duration }}</td>
                     </tr>
                     @if($course->prerequisites)
                         <tr class="text-gray-900">
                             <th class="text-gray-700 uppercase pr-2 py-3">Voraussetzungen</th>
-                            <td class="px-2 py-2">{{ $course->prerequisites }}</td>
+                            <td class="px-1 py-1 md:px-2 py-2">{{ $course->prerequisites }}</td>
                         </tr>
                     @endif
                     <tr class=" text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">Anmeldefrist</th>
-                        <td class="px-2 py-2">{{ $course->registration_deadline->format('d.m.Y') }}</td>
+                        <td class="px-1 py-1 md:px-2 py-2">{{ $course->registration_deadline->format('d.m.Y') }}</td>
                     </tr>
                     @if($course->notes)
                         <tr class="text-gray-900">
                             <th class="text-gray-700 uppercase pr-2 py-3">Notizen</th>
-                            <td class="px-2 py-2">{{ $course->notes }}</td>
+                            <td class="px-1 py-1 md:px-2 py-2">{{ $course->notes }}</td>
                         </tr>
                     @endif
                     @if($course->link)
                         <tr class="text-gray-900">
                             <th class="text-gray-700 uppercase pr-2 py-3">Link</th>
-                            <td class="px-2 py-2"><a class="text-blue-500 hover:text-blue-700 underline font-medium" href="{{ $course->link }}" target="_blank">Link</a></td>
+                            <td class="px-1 py-1 md:px-2 py-2"><a class="text-blue-500 hover:text-blue-700 underline font-medium" href="{{ $course->link }}" target="_blank">Link</a></td>
                         </tr>
                     @endif
                 </table>
@@ -64,16 +64,16 @@
                 @endif
             </x-content-view>
         </div>
-        <div class="md:col-span-4">
+        <div class="lg:col-span-4 mt-4 sm:mt-5 md:mt-6 lg:mt-0">
             <x-content-view>
                 <div class="grid grid-cols-2">
-                    <h3 class="font-semibold text-xl">👥 Kursteilnehmer</h3>
+                    <h3 class="font-semibold text-l md:text-xl">👥 Kursteilnehmer</h3>
                     @if ($course->registration_deadline >= now())
                         <span class="flex justify-end">
                             @if (!$userStatus)
-                                <form action="{{ route('courses.signup', $course) }}" method="POST">
+                                <form action="{{ route('courses.signup', [$course, auth()->user()]) }}" method="POST">
                                     @csrf
-                                    <x-button class="btn btn-primary">Mich Eintragen</x-button>
+                                    <button class="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Mich Eintragen</button>
                                 </form>
                             @endif
                         </span>
@@ -82,27 +82,27 @@
                 @if($users->isEmpty())
                     <x-no-data>Es sind noch keine Teilnehmer für diesen Kurs eingetragen.</x-no-data>
                 @else
-                    <table class="mt-4 w-full text-sm text-left text-gray-500">
+                    <table class="mt-4 w-full text-xs md:text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr class="text-left">
-                                <th class="px-6 py-3">Name</th>
-                                <th class="px-6 py-3">Datum</th>
-                                <th class="px-6 py-3">Status</th>
+                                <th class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Name</th>
+                                <th class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Datum</th>
+                                <th class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($users as $user)
                                 <tr class="odd:bg-white even:bg-gray-50 text-gray-900 border-b">
-                                    <td class="px-6 py-3">{{ $user->name }}</td>
-                                    <td class="px-6 py-3">{{ $user->pivot->formatted_timestamp }}</td>
+                                    <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->name }}</td>
+                                    <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->pivot->formatted_timestamp }}</td>
                                     @if ((auth()->user()->isJSVerantwortlich() && $currentTeamUsers->contains($user) && !$user->isJSCoach()) || auth()->user()->isJSCoach())
-                                        <td class="px-6 py-3">
+                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">
                                             <span class="flex">
                                                 <form action="{{ route('courses.change-status', [$course]) }}" method="POST">
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     @csrf
                                                 
-                                                        <select id="status" onchange="this.form.submit()" name="status" class="border-transparent bg-gray-200 rounded-md">
+                                                        <select id="status" onchange="this.form.submit()" name="status" class="text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
                                                             @if ($user->pivot->status == 'signed_up')
                                                                 <option value="signed_up" {{ $user->pivot->status == 'signed_up' ? 'selected' : ''}}>⌛ Eingetragen</option>
                                                             @endif
@@ -121,33 +121,33 @@
                                                     <form action="{{ route('courses.delete-status', $course) }}" method="POST">
                                                         @csrf
                                                             <input type="hidden" name="user_id" value="{{ $user->id }}">
-                                                            <x-button type="submit" class="h-full ml-2 px-4 py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">X</x-button>
+                                                            <button type="submit" class="h-full ml-2 px-3 py-2 md:px-4 bg-red-800 border border-transparent rounded-md font-semibold text-xs md:text-sm text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">X</button>
                                                     </form>
                                                 @endif
                                             </span>
                                         </td>
-                                    @elseif ($user->id == auth()->user()->id && $course->isInPast() && $course->userStatus->status == 'registered')
-                                        <td class="px-6 py-3">
+                                    @elseif ($user->id == auth()->user()->id && $course->isInPast() && $course->userStatus($user->id)?->status == 'registered')
+                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">
                                             
                                             <span class="flex">
                                                 <span>Teilgenommen:</span>
                                                 <form action="{{ route('courses.attend', [$course, auth()->user()]) }}" method="POST" class="ml-2">
                                                     @csrf
-                                                    <x-button type="submit" class="px-4 py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                                    <button type="submit" class="px-2 py-2 sm:px-3 md:px-4 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
                                                         Ja
-                                                    </x-button>
+                                                    </button>
                                                 </form>
                                                 <form action="{{ route('courses.cancel', [$course, auth()->user()]) }}" method="POST" class="ml-2">
                                                     @csrf
-                                                    <x-button type="submit" class="px-4 py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                                    <button type="submit" class="px-2 py-2 sm:px-3 md:px-4 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
                                                         nein
-                                                    </x-button>
+                                                    </button>
                                                 </form>
                                             </span>
                                         </td>    
                                     @else
 
-                                        <td class="px-6 py-3">{{ $user->pivot->formatted_status }}</td>
+                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->pivot->formatted_status }}</td>
                                     @endif
                                 </tr>
                             @endforeach
@@ -158,24 +158,24 @@
                     <form action="{{ route('courses.change-status', [$course]) }}" method="POST" class="ml-auto">
                         @csrf
                         <span class="flex mt-2">
-                            <select id="user_id" name="user_id" class="border-transparent bg-gray-200 rounded-md">
+                            <select id="user_id" name="user_id" class="text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
                                 <option value="" disabled selected>Leiter auswählen</option>
                                 @foreach ($availableUsers as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>
-                            <select id="status" name="status" class="ml-2 border-transparent bg-gray-200 rounded-md">
+                            <select id="status" name="status" class="text-xs md:text-sm ml-2 border-transparent bg-gray-200 rounded-md">
                                 @if (!$course->isInPast())
-                                    <option value="signed_up">Eingetragen</option>
+                                    <option value="signed_up">⌛ Eingetragen</option>
                                 @endif
                                 @if (auth()->user()->isJSCoach() && !$course->isInPast())
-                                    <option value="registered">Angemeldet</option>
+                                    <option value="registered">✔️ Angemeldet</option>
                                 @endif
                                 @if ($course->isInPast())
-                                    <option value="attended">Teilgenommen</option>
+                                    <option value="attended">✅ Teilgenommen</option>
                                 @endif
                             </select>
-                            <x-button type="submit" class="ml-2 px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                            <x-button type="submit" class="ml-2 px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs md:text-sm text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
                                 ✓
                             </x-button>
                         </span>

@@ -57,9 +57,9 @@ class Course extends Model
         $diffInDays = $this->date_start->diffInDays($this->date_end) + 1;
 
         if ($diffInDays == 1) {
-            return "1 Tag";
+            return "";
         } else {
-            return "$diffInDays Tage";
+            return " ($diffInDays Tage)";
         }
     }
 
@@ -149,22 +149,9 @@ class Course extends Model
         return $query->where('is_hidden', false);
     }
 
-    /**
-     * Check if registration is still open
-     */
     public function isRegistrationOpen()
     {
         return Carbon::now()->lessThanOrEqualTo($this->registration_deadline);
-    }
-
-    public function scopeWithUserStatus($query, $userId = null)
-    {
-        $userId = $userId ?? auth()->id();
-
-        $query->with(['userStatus' => function ($query) use ($userId) {
-            $query->where('user_id', $userId)
-                ->select('course_id', 'status', 'user_id');
-        }]);
     }
 
     public function scopeWithoutUser($query, $userId = null)
@@ -185,33 +172,38 @@ class Course extends Model
         return $query->where('date_start', '>', now());
     }
 
-    public function userStatus()
+    public function userStatus($userId = null)
     {
+        $userId = $userId ?? auth()->id();
         return $this->hasOne(CourseUser::class, 'course_id')
-            ->where('user_id', auth()->id());
+            ->where('user_id', $userId)->first();
     }
 
     public function availableUsers()
     {
-    if (auth()->user()->isJSCoach()) {
-        $teamUsers = User::all();
-    } else {
-        $teamUsers = auth()->user()->currentTeam->users;
-    }
-    $signedUpUserIds = $this->users()->pluck('users.id')->toArray();
-
-    return $teamUsers->filter(function ($user) use ($signedUpUserIds) {
-        if (in_array($user->id, $signedUpUserIds)) {
-            return false;
+        if (auth()->user()->isJSCoach()) {
+            $teamUsers = User::withTeams()->get();
+        } else {
+            $teamUsers = auth()->user()->currentTeam->users;
         }
+        $signedUpUserIds = $this->users()->pluck('users.id')->toArray();
 
-        if (!auth()->user()->isJSCoach() && $user->isJSCoach()) {
-            return false;
-        }
+        return $teamUsers->filter(function ($user) use ($signedUpUserIds) {
+            if (in_array($user->id, $signedUpUserIds)) {
+                return false;
+            }
 
-        return $this->meetsAgeRequirementForUser($user) &&
-               $this->meetsPrerequisiteRequirementForUser($user);
-    });
+            if ($user->id == auth()->user()->currentTeam->user_id) {
+                return false;
+            }
+
+            if (!auth()->user()->isJSCoach() && $user->isJSCoach()) {
+                return false;
+            }
+
+            return $this->meetsAgeRequirementForUser($user) &&
+                $this->meetsPrerequisiteRequirementForUser($user);
+        });
     }
 
     protected function meetsAgeRequirementForUser($user)
@@ -240,6 +232,10 @@ class Course extends Model
             ->toArray();
 
         $prerequisiteId = $this->courseType->prerequisite_course_type_id;
+
+        if ($this->courseType->can_only_attend_once && in_array($this->courseType->id, $attendedCourseTypes)) {
+            return false;
+        }
 
         return $prerequisiteId === null || in_array($prerequisiteId, $attendedCourseTypes);
     }

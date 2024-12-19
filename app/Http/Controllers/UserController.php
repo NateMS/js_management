@@ -17,8 +17,8 @@ class UserController extends Controller
             redirect()->back();
         }
 
-        $users = $currentTeam->users()->excludeOwners(auth()->user()->currentTeam)->get();
-
+        $users = $currentTeam->users()->aged18OrOlder()->excludeOwners(auth()->user()->currentTeam)->get();
+        $under18 = $currentTeam->users()->agedUnder18()->get();
         $past = collect([]);
         $soon = collect([]);
         $future = collect([]);
@@ -50,8 +50,9 @@ class UserController extends Controller
         $soon = $soon->sortBy('birthdate');
         $future = $future->sortBy('birthdate');
         $none = $none->sortBy('birthdate');
+        $under18 = $under18->sortBy('birthdate');
 
-        return view('users.team', compact('past', 'soon', 'future', 'none'));
+        return view('users.team', compact('past', 'soon', 'future', 'none', 'under18'));
     }
 
     public function show(User $user)
@@ -90,9 +91,13 @@ class UserController extends Controller
             'js_number' => 'nullable|string|max:255',
         ]);
 
+        if ($request->get('js_number') == $user->js_number) {
+            return redirect()->route('users.show', $user);
+        }
+
         $user->update($request->all());
 
         
-        return redirect()->route('users.show', $user)->with('success', 'J&S Nummer angepasst');
+        return redirect()->route('users.show', $user)->with('success', 'J&S Nummer angepasst!');
     }
 }

@@ -26,7 +26,7 @@
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-7xl mx-auto py-3 sm:py-4 md:py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
@@ -35,12 +35,12 @@
             <!-- Page Content -->
             <main>
                 @if(session('success'))
-                    <div class="py-4 w-full text-center bg-green-100 font-bold">
+                    <div class="py-3 sm:py-4 w-full text-center bg-green-100 font-bold">
                         {{ session('success') }}
                     </div>
                 @endif
                 @if(session('error'))
-                    <div class="py-4 w-full text-center bg-red-100 font-bold">
+                    <div class="py-3 sm:py-4 w-full text-center bg-red-100 font-bold">
                         {{ session('error') }}
                     </div>
                 @endif

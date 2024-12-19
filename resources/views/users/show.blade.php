@@ -35,12 +35,12 @@
                     </td>
                 </tr>
                 <tr class="text-gray-900">
-                    <th class="text-gray-700 uppercase pr-2 py-3">Leiterlizenz ist gültig bis</th>
-                    <td class="px-2 py-2">{{ $validityDate }}</td>
+                    <th class="text-gray-700 uppercase pr-2 py-3">J&S Gültigkeit bis</th>
+                    <td class="px-2 py-2 font-bold {{ $user->getRevalidationColorClass() }}">{{ $validityDate }}</td>
                 </tr>
                 <tr class="text-gray-900">
                     <th class="text-gray-700 uppercase pr-2 py-3">Hat Kids-Ausbildung</th>
-                    <td class="px-2 py-2">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
+                    <td class="px-2 py-2 font-bold">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
                 </tr>
             </table>
         </div> 
@@ -51,7 +51,7 @@
             <h1 class="text-xl font-bold text-gray-800 mb-4">Geplante Kurse</h1>
             @foreach ($planned->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                 <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
-                <x-simple-course-table :courses="$coursesForType" status="true" />                                   
+                <x-simple-course-table :courses="$coursesForType" :user="$user" status="true" />                                   
             @endforeach
         </x-content-view>
     @endif
@@ -61,7 +61,7 @@
             <h1 class="text-xl font-bold text-gray-800 mb-4">Vergangene Kurse</h1>
             @foreach ($past->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                 <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
-                <x-simple-course-table :courses="$coursesForType" status="true" />                                   
+                <x-simple-course-table :courses="$coursesForType" :user="$user" status="true" />                                   
             @endforeach
         </x-content-view>
     @endif
