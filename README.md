@@ -1,4 +1,4 @@
-# Coach-Cobra
+# Cobra-Coach
 
 ## Laravel Development Environment Setup
 
