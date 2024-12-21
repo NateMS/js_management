@@ -1,5 +1,7 @@
 # Cobra-Coach
 
+J&S Kurs-Management Webapplikation
+
 ## Laravel Development Environment Setup
 
 ---
