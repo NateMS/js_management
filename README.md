@@ -1,6 +1,8 @@
 # Cobra-Coach
 
-J&S Kurs-Management Webapplikation
+J&S Kurs-Management Web-applikation
+
+Dieses Tool erlaubt es, eine einfache Übersicht über anstehende und besuchte J&S Kurse der Leiter deiner Riege zu haben.
 
 ## Laravel Development Environment Setup
 
