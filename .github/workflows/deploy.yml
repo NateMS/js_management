@@ -37,7 +37,8 @@ jobs:
         with:
           node-version: '23'
       - run: npm ci
-      - run: npm run prod
+      - run: npm install
+      - run: npm run build
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
