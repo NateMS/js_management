@@ -17,7 +17,7 @@ Route::post('/deploy', function () {
     $firstTimeMigration = !Schema::hasTable('users');
 
     try {
-        Artisan::call('migrate --force');
+        Artisan::call('migrate');
 
         if ($firstTimeMigration) {
             Artisan::call('db:seed --force');
