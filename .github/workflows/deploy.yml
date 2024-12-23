@@ -50,3 +50,8 @@ jobs:
           local-dir: ./
           server-dir: /
 
+      - name: Trigger Laravel Optimization Commands
+        run: |
+          curl -X POST ${{ secrets.DOMAIN }} \
+          -d "key=${{ secrets.DEPLOY_KEY }}"
+

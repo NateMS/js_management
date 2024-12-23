@@ -7,6 +7,21 @@ use App\Http\Controllers\CourseRegistrationController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserHasTeam;
 use App\Http\Middleware\CheckCourseAccess;
+use Illuminate\Support\Facades\Artisan;
+
+Route::post('/deploy', function () {
+    if (request('key') !== env('DEPLOY_KEY')) {
+        abort(403, 'Unauthorized');
+    }
+
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+
+    Artisan::call('migrate');
+
+    return response('Deployment complete!', 200);
+});
+
 
 Route::middleware([
     'auth:sanctum',
