@@ -10,19 +10,13 @@ use App\Http\Middleware\CheckCourseAccess;
 use Illuminate\Support\Facades\Artisan;
 
 Route::post('/deploy', function () {
-    $key = request('key');
-    $deployKey = env('DEPLOY_KEY');
-    if ($key !== $deployKey) {
-        return response()->json([
-            'message' => 'Unauthorized',
-            'received_key' => $key,
-            'expected_key' => $deployKey,
-        ], 403);
+    if (request('key') !== env('DEPLOY_KEY')) {
+        abort(403, 'Unauthorized');
     }
 
     Artisan::call('migrate --force');
 
-    return response('Deployment complete!', 200);
+    return response()->json(['message' => 'Deployment complete!'], 200);
 })->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);;
 
 
