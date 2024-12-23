@@ -8,7 +8,6 @@ use App\Models\CourseType;
 use App\Models\Course;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
