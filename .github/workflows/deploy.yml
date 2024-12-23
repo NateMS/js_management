@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  deploy:
+  deploy:c
     name: 🎉 Deploy
     runs-on: ubuntu-latest
 
@@ -47,7 +47,7 @@ jobs:
 
       - name: Sync files via SSH
         run: |
-              rsync -avz --delete --exclude '.htaccess' --exclude '.env' --exclude=".git" --exclude="node_modules" -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WEB_DIR }}
+              rsync -avz --delete --exclude 'public/.htaccess' --exclude '.htaccess' --exclude '.env' --exclude=".git" --exclude="node_modules" -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WEB_DIR }}
       - name: Trigger Laravel Optimization Commands
         run: |
           curl -X POST ${{ secrets.DOMAIN }} \
