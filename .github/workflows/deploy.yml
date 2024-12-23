@@ -66,16 +66,6 @@ jobs:
           php artisan config:cache
           php artisan route:cache
           php artisan view:cache
-          php artisan migrate --force
-        env:
-          APP_KEY: ${{ secrets.APP_KEY }}
-          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
 
       - name: Trigger Laravel Optimization Commands
         run: |
