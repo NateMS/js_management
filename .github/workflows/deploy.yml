@@ -1,10 +1,9 @@
-name: Deploy Project
+name: 🚀 Deploy website on push (Main)
 
 on:
   push:
     branches:
       - main
-name: 🚀 Deploy website on push (Main)
 jobs:
   deploy:
     name: 🎉 Deploy
