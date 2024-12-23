@@ -14,7 +14,7 @@ Route::post('/deploy', function () {
         abort(403, 'Unauthorized');
     }
 
-    Artisan::call('migrate');
+    Artisan::call('migrate --force');
 
     Artisan::call('config:cache');
     Artisan::call('route:cache');
