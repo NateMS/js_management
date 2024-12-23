@@ -17,7 +17,7 @@ Route::post('/deploy', function () {
     $firstTimeMigration = !Schema::hasTable('users');
 
     try {
-        Artisan::call('migrate');
+        Artisan::call('migrate --force');
     } catch (Exception $e) {
         return response()->json([
             'title:' => 'error with migration',
@@ -25,17 +25,16 @@ Route::post('/deploy', function () {
         ], 500);
     }
 
-    try {
-        if ($firstTimeMigration) {
+    if ($firstTimeMigration) {
+        try {
             Artisan::call('db:seed --force');
+        } catch (Exception $e) {
+            return response()->json([
+                'title:' => 'error with db:seed',
+                'message:' => $e
+            ], 500);
         }
-    } catch (Exception $e) {
-        return response()->json([
-            'title:' => 'error with db:seed',
-            'message:' => $e
-        ], 500);
     }
-   
 
     return response()->json(['message' => 'Deployment complete!'], 200);
 })->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);;
