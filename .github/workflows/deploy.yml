@@ -53,3 +53,11 @@ jobs:
           curl -X POST ${{ secrets.DOMAIN }} \
           -d "key=${{ secrets.DEPLOY_KEY }}"
 
+      - name: Set permissions
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          chmod -R 775 ${WEB_DIR}/storage
+          chmod -R 775 ${WEB_DIR}/bootstrap/cache
+          chmod 600 ${WEB_DIR}/.env
+        EOF
+        
