@@ -14,10 +14,10 @@ Route::post('/deploy', function () {
         abort(403, 'Unauthorized');
     }
 
+    Artisan::call('migrate');
+
     Artisan::call('config:cache');
     Artisan::call('route:cache');
-
-    Artisan::call('migrate');
 
     return response('Deployment complete!', 200);
 });
