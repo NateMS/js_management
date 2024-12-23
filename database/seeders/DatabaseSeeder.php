@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
                 'birthdate' => Carbon::parse(env('USER3_BIRTHDATE')),
                 'password' => Hash::make(env('USER3_PASSWORD')),
                 'js_number' => env('USER3_JS_NUMBER'),
+                'is_js_coach' => true,
             ]
         );
 
