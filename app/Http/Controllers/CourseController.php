@@ -69,14 +69,14 @@ class CourseController extends Controller
             abort(404);
         }
         $years = Course::query()
-            ->selectRaw('strftime("%Y", date_start) as year')
+            ->selectRaw('YEAR(date_start) as year')
             ->distinct()
             ->orderBy('year', 'desc')
             ->pluck('year');
         $selectedYear = $years ? $request->input('year', $years->first()) : '';
         
 
-        $courses = $selectedYear ? Course::whereRaw('strftime("%Y", date_start) = ?', [$selectedYear])->with('courseType')->get() : Course::with('courseType')->get();
+        $courses = $selectedYear ? Course::whereRaw('YEAR(date_start) = ?', [$selectedYear])->with('courseType')->get() : Course::with('courseType')->get();
         return view('courses.index', compact('courses', 'years', 'selectedYear'));
     }
 
@@ -258,7 +258,7 @@ class CourseController extends Controller
         $years = Course::whereHas('users', function ($query) {
             $query->where('course_user.status', 'attended');
         })
-        ->selectRaw('strftime("%Y", date_start) as year')
+        ->selectRaw('YEAR(date_start) as year')
         ->distinct()
         ->orderBy('year', 'desc')
         ->pluck('year');
@@ -273,7 +273,7 @@ class CourseController extends Controller
         }]);
     
         if ($selectedYear) {
-            $courseQuery->whereRaw('strftime("%Y", date_start) = ?', [$selectedYear]);
+            $courseQuery->whereRaw('YEAR(date_start) = ?', [$selectedYear]);
         }
     
         $courses = $courseQuery->orderBy('date_start', 'asc')->get();
@@ -294,7 +294,7 @@ class CourseController extends Controller
         $years = Course::whereHas('users', function ($query) {
             $query->where('course_user.status', 'cancelled');
         })
-        ->selectRaw('strftime("%Y", date_start) as year')
+        ->selectRaw('YEAR(date_start) as year')
         ->distinct()
         ->orderBy('year', 'desc')
         ->pluck('year');
@@ -309,7 +309,7 @@ class CourseController extends Controller
         }]);
     
         if ($selectedYear) {
-            $courseQuery->whereRaw('strftime("%Y", date_start) = ?', [$selectedYear]);
+            $courseQuery->whereRaw('YEAR(date_start) = ?', [$selectedYear]);
         }
     
         $courses = $courseQuery->orderBy('date_start', 'asc')->get();

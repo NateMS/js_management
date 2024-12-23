@@ -113,12 +113,12 @@ class Course extends Model
         return $query->whereHas('courseType', function ($courseTypeQuery) use ($birthYear) {
             $courseTypeQuery->where(function ($q) use ($birthYear) {
                 $q->where(function ($subQ) use ($birthYear) {
-                    $subQ->whereRaw("(strftime('%Y', courses.date_start) - ? >= course_types.minimum_age)", [$birthYear])
+                    $subQ->whereRaw("(YEAR(courses.date_start) - ? >= course_types.minimum_age)", [$birthYear])
                         ->orWhereNull('course_types.minimum_age');
                 });
                 
                 $q->where(function ($subQ) use ($birthYear) {
-                    $subQ->whereRaw("(strftime('%Y', courses.date_start) - ? <= course_types.maximum_age)", [$birthYear])
+                    $subQ->whereRaw("(YEAR(courses.date_start) - ? <= course_types.maximum_age)", [$birthYear])
                         ->orWhereNull('course_types.maximum_age');
                 });
             });
