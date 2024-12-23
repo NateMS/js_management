@@ -65,4 +65,3 @@ jobs:
         run: |
           curl -X POST ${{ DOMAIN }} \
           -d "key=${{ secrets.DEPLOY_KEY }}"
-        
