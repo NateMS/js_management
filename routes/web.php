@@ -16,9 +16,6 @@ Route::post('/deploy', function () {
 
     Artisan::call('migrate --force');
 
-    Artisan::call('config:cache');
-    Artisan::call('route:cache');
-
     return response('Deployment complete!', 200);
 });
 
