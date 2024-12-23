@@ -100,7 +100,7 @@
                         </thead>
                         <tbody>
                             @foreach($users as $user)
-                                <tr class="odd:bg-white even:bg-gray-50 text-gray-900 border-b">
+                                <tr class="odd:bg-white even:bg-gray-50 text-gray-900 border-b hover:bg-blue-50" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->name }}</td>
                                     <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->pivot->formatted_timestamp }}</td>
                                     @if ((auth()->user()->isJSVerantwortlich() && $currentTeamUsers->contains($user) && !$user->isJSCoach()) || auth()->user()->isJSCoach())

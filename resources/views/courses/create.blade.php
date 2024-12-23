@@ -9,7 +9,7 @@
         <form action="{{ route('courses.store') }}" method="POST">
             @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <x-label for="course_nr" value="Kursnummer" />
                 <x-input type="text" name="course_nr" id="course_nr" class="mt-1 block w-full" />
                 @error('course_nr')
@@ -17,7 +17,7 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <x-label for="name" value="Name" />
                 <x-input type="text" name="name" id="name" class="mt-1 block w-full" required />
                 @error('name')
@@ -25,7 +25,7 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- Course Type -->
                 <x-label for="course_type_id" value="Kurstyp" />
                 <select name="course_type_id" id="course_type_id" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
@@ -39,13 +39,15 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- Start Date -->
                 <x-label for="date_start" value="Startdatum" />
                 <x-input type="date" name="date_start" id="date_start" class="mt-1 block w-full" required />
                 @error('date_start')
                     <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
                 @enderror
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- End Date -->
                 <x-label for="date_end" value="Enddatum" />
                 <x-input type="date" name="date_end" id="date_end" class="mt-1 block w-full" required />
@@ -54,7 +56,7 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- Location -->
                 <x-label for="location" value="Ort" />
                 <x-input type="text" name="location" id="location" class="mt-1 block w-full" required />
@@ -63,7 +65,7 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- Prerequisites -->
                 <x-label for="prerequisites" value="Voraussetzungen" />
                 <textarea name="prerequisites" id="prerequisites" rows="3" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
@@ -72,7 +74,7 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- Registration Deadline -->
                 <x-label for="registration_deadline" value="Anmeldeschluss" />
                 <x-input type="date" name="registration_deadline" id="registration_deadline" class="mt-1 block w-full" required />
@@ -80,7 +82,7 @@
                     <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <!-- Link -->
                 <x-label for="link" value="Link" />
                 <x-input type="url" name="link" id="link" class="mt-1 block w-full" />
@@ -89,7 +91,7 @@
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3 md:mt-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-3 md:mt-6">
                 <div></div>
                 <div>
                     <x-button>
