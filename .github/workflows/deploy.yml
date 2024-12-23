@@ -48,8 +48,7 @@ jobs:
 
       - name: Sync files via SSH
         run: |
-        rsync -avz --delete --exclude '.env' --exclude=".git" --exclude="node_modules" \
-          -e "ssh -o StrictHostKeyChecking=no" ./ ${{ SSH_USER}}@${{ SSH_HOST }}:${{ WEB_DIR }}
+        rsync -avz --delete --exclude '.env' --exclude=".git" --exclude="node_modules" -e "ssh -o StrictHostKeyChecking=no" ./ ${{ SSH_USER}}@${{ SSH_HOST }}:${{ WEB_DIR }}
 
       - name: Trigger Laravel Optimization Commands
         run: |
