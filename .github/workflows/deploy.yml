@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  deploy:c
+  deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
 
