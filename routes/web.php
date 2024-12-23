@@ -23,7 +23,7 @@ Route::post('/deploy', function () {
             Artisan::call('db:seed --force');
         }
     } catch (Exception $e) {
-        return response()->json(['message' => $e], 500);
+        return response()->json([$e], 500);
     }
    
 
