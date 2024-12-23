@@ -19,47 +19,45 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $user1 = User::updateOrCreate(
-            ['email' => 'owner@salloum.pm'],
+            ['email' => env('USER1_EMAIL')],
             [
-                'name' => 'Administrator',
-                'email' => 'owner@salloum.pm',
-                'birthdate' => Carbon::parse('1995-11-27'),
-                'password' => Hash::make('abcd1234'),
-                'js_number' => '000000001',
+                'name' => env('USER1_NAME'),
+                'email' => env('USER1_EMAIL'),
+                'birthdate' => Carbon::parse(env('USER1_BIRTHDATE')),
+                'password' => Hash::make(env('USER1_PASSWORD')),
             ]
         );
 
         $user2 = User::updateOrCreate(
-            ['email' => 'tester@salloum.pm'],
+            ['email' => env('USER2_EMAIL')],
             [
-                'name' => 'Adrian Volger',
-                'email' => 'tester@salloum.pm',
-                'birthdate' => Carbon::parse('1995-11-27'),
-                'password' => Hash::make('abcd1234'),
-                'js_number' => '000000002',
+                'name' => env('USER2_NAME'),
+                'email' => env('USER2_EMAIL'),
+                'birthdate' => Carbon::parse(env('USER2_BIRTHDATE')),
+                'password' => Hash::make(env('USER2_PASSWORD')),
+                'js_number' => env('USER2_JS_NUMBER'),
             ]
         );
 
         $user3 = User::updateOrCreate(
-            ['email' => 'coach@salloum.pm'],
+            ['email' => env('USER3_EMAIL')],
             [
-                'name' => 'Anja Kaufmann',
-                'email' => 'coach@salloum.pm',
-                'is_js_coach' => true,
-                'birthdate' => Carbon::parse('1995-11-27'),
-                'password' => Hash::make('abcd1234'),
-                'js_number' => '000000003',
+                'name' => env('USER3_NAME'),
+                'email' => env('USER3_EMAIL'),
+                'birthdate' => Carbon::parse(env('USER3_BIRTHDATE')),
+                'password' => Hash::make(env('USER3_PASSWORD')),
+                'js_number' => env('USER3_JS_NUMBER'),
             ]
         );
 
         $user4 = User::updateOrCreate(
-            ['email' => 'nadim@salloum.pm'],
+            ['email' => env('USER4_EMAIL')],
             [
-                'name' => 'Nadim Salloum',
-                'email' => 'nadim@salloum.pm',
-                'birthdate' => Carbon::parse('1995-11-27'),
-                'password' => Hash::make('abcd1234'),
-                'js_number' => '000000004',
+                'name' => env('USER4_NAME'),
+                'email' => env('USER4_EMAIL'),
+                'birthdate' => Carbon::parse(env('USER4_BIRTHDATE')),
+                'password' => Hash::make(env('USER4_PASSWORD')),
+                'js_number' => env('USER4_JS_NUMBER'),
             ]
         );
 
