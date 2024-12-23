@@ -16,6 +16,12 @@ Route::post('/deploy', function () {
 
     Artisan::call('migrate --force');
 
+    $firstTimeMigration = !Schema::hasTable('users');
+
+    if ($firstTimeMigration) {
+        Artisan::call('db:seed --force');
+    }
+
     return response()->json(['message' => 'Deployment complete!'], 200);
 })->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);;
 
