@@ -14,9 +14,9 @@ Route::post('/deploy', function () {
         abort(403, 'Unauthorized');
     }
 
-    Artisan::call('migrate --force');
-
     $firstTimeMigration = !Schema::hasTable('users');
+
+    Artisan::call('migrate --force');
 
     if ($firstTimeMigration) {
         Artisan::call('db:seed --force');
