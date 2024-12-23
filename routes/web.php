@@ -16,7 +16,7 @@ Route::post('/deploy', function () {
 
     Artisan::call('migrate --force');
 
-    return response('Deployment complete!', 200);
+    return response('Deployment completed!', 200);
 })->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);;
 
 
