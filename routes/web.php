@@ -18,12 +18,22 @@ Route::post('/deploy', function () {
 
     try {
         Artisan::call('migrate');
+    } catch (Exception $e) {
+        return response()->json([
+            'title:' => 'error with migration',
+            'message:' => $e
+        ], 500);
+    }
 
+    try {
         if ($firstTimeMigration) {
             Artisan::call('db:seed --force');
         }
     } catch (Exception $e) {
-        return response()->json([$e], 500);
+        return response()->json([
+            'title:' => 'error with db:seed',
+            'message:' => $e
+        ], 500);
     }
    
 
