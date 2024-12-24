@@ -16,6 +16,9 @@ Route::post('/deploy', function () {
 
     $firstTimeMigration = !Schema::hasTable('users');
 
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
     try {
         Artisan::call('migrate --force');
     } catch (Exception $e) {
