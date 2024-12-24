@@ -13,7 +13,7 @@
                         @endif
                 
                         @if (auth()->user()->isJSCoach() && $course->users->isEmpty())
-                            <form class="inline" action="{{ route('courses.destroy', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Möchten Sie diesen Kurstyp wirklich löschen?');">
+                            <form class="inline" action="{{ route('courses.destroy', $course) }}" method="POST" class="d-inline" onsubmit="return confirm('Willst du diesen Kurs löschen?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="ml-2 px-4 py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-600 focus:bg-red-600 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Löschen</button>
@@ -77,7 +77,7 @@
                     @if ($course->registration_deadline >= now())
                         <span class="flex justify-end">
                             @if (!$userStatus)
-                                <form action="{{ route('courses.signup', [$course, auth()->user()]) }}" method="POST">
+                                <form action="{{ route('courses.signup', [$course, auth()->user()]) }}" method="POST" onsubmit="return confirm('Möchtest du dich für diesen Kurs eintragen? Der J&S-Coach wird per E-Mail informiert.');">
                                     @csrf
                                     <button class="px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
                                         Mich Eintragen
