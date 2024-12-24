@@ -25,7 +25,9 @@
     </head>
     <body class="font-sans antialiased">
         <x-banner />
-
+        @if(env('APP_ENV') == 'local')
+            <div class="w-full bg-gray-500 text-center py-2 text-white"> DEV ENVIRONMENT</div>
+        @endif
         <div class="min-h-screen bg-gray-100 pb-3">
             @livewire('navigation-menu')
 
