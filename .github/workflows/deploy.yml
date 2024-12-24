@@ -36,7 +36,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '23'
-      - run: npm ci
       - run: npm install
       - run: npm run build
 
@@ -48,10 +47,6 @@ jobs:
       - name: Sync files via SSH
         run: |
               rsync -avz --delete --exclude 'public/.htaccess' --exclude '.htaccess' --exclude '.env' --exclude=".git" --exclude="node_modules" -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WEB_DIR }}
-      - name: Trigger Laravel Optimization Commands
-        run: |
-          curl -X POST ${{ secrets.DOMAIN }} \
-          -d "key=${{ secrets.DEPLOY_KEY }}"
 
       - name: Set permissions
         run: |
@@ -60,12 +55,6 @@ jobs:
             chmod -R 775 ${{ secrets.WEB_DIR }}/bootstrap/cache
             chmod 600 ${{ secrets.WEB_DIR }}/.env
           EOF
-
-      - name: Run Laravel Artisan commands
-        run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
 
       - name: Trigger Laravel Optimization Commands
         run: |
