@@ -110,7 +110,7 @@
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     @csrf
                                                 
-                                                        <select id="status" onchange="this.form.submit()" name="status" class="text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
+                                                        <select id="status" onclick="event.stopPropagation()" onchange="this.form.submit()" name="status" class="text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
                                                             @if ($user->pivot->status == 'signed_up')
                                                                 <option value="signed_up" {{ $user->pivot->status == 'signed_up' ? 'selected' : ''}}>⌛ Eingetragen</option>
                                                             @endif

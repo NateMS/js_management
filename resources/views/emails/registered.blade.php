@@ -2,8 +2,6 @@
 # Anmeldebestätigung
 Du wurdest durch den J&S Coach ({{ $coach->name }}) für den folgenden Kurs angemeldet:
 
-## Kurs
-<x-mail::panel>
 ### {{ $course->courseType->name }}
 @if ($course->course_nr)
 {{ $course->course_nr }}<br>
@@ -16,5 +14,4 @@ Du wurdest durch den J&S Coach ({{ $coach->name }}) für den folgenden Kurs ange
 <x-mail::button url="{{ route('courses.show', $course) }}">
     zum Kurs
 </x-mail::button>
-</x-mail::panel>
 </x-mail::message>
