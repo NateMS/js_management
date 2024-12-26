@@ -48,24 +48,7 @@
                             <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 font-bold">{{ $course->courseType->name }}<span class="hidden md:inline">, {{ $course->course_nr }}</span></td>
                             <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 hidden md:table-cell">{{ $course->name }}</td>
                             <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $course->location }}</td>
-                            <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $course->formatted_date_range }}<span class="hidden md:inline">{{ $course->duration }}</span></td>
-                            <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Teilgenommen:</td>
-                            <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">
-                                <span class="flex">
-                                    <form action="{{ route('courses.attend', [$course, $user]) }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="px-2 py-1 md:px-4 md:py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
-                                            Ja
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('courses.cancel', [$course, $user]) }}" method="POST" class="ml-2">
-                                        @csrf
-                                        <button type="submit" class="px-2 py-1 md:px-4 md:py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
-                                            Nein
-                                        </button>
-                                    </form>
-                                </span>
-                            </td>
+                            <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $course->formatted_date_range }}<span class="hidden md:inline">{{ $course->duration }}</span></td>                          
                         @else
                             <td class="px-2 w-1/4 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 font-bold">{{ $course->courseType->name }}<span class="hidden md:inline">, {{ $course->course_nr }}</span></td>
                             <td class="px-2 w-1/4 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 hidden md:table-cell">{{ $course->name }}</td>

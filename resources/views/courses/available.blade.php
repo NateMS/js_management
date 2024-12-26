@@ -13,9 +13,24 @@
         @if(!$pastCourses->isEmpty())
             <x-content-view>
                 <h1 class="text-2xl font-bold text-gray-800 mb-4">Vergangene Kurse</h1>
-                <p>Bitte bestätige, ob du an diesem Kurs teilgenommen hast.</p>
+                <p class="pb-2 text-sm">Bitte bestätige, ob du an diesem Kurs teilgenommen hast.</p>
                 @foreach ($pastCourses as $course)
-                    <x-simple-course-table :course="$course" :user="auth()->user()" status="true" />                                   
+                    <x-simple-course-table :course="$course" :user="auth()->user()" status="true" />
+                    <span class="flex justify-end pt-2 pb-4">
+                        <span class="pr-2">Teilgenommen:</span>
+                        <form action="{{ route('courses.attend', [$course, auth()->user()]) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-2 py-1 md:px-4 md:py-2 bg-green-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                Ja
+                            </button>
+                        </form>
+                        <form action="{{ route('courses.cancel', [$course, auth()->user()]) }}" method="POST" class="ml-2">
+                            @csrf
+                            <button type="submit" class="px-2 py-1 md:px-4 md:py-2 bg-red-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                Nein
+                            </button>
+                        </form>
+                    </span>                                   
                 @endforeach
             </x-content-view>
         @endif

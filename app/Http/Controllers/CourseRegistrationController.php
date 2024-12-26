@@ -76,6 +76,8 @@ class CourseRegistrationController extends Controller
                     ]);
                 }
             });
+
+            Mail::to($user->email)->send(new RegistrationConfirmation($course));
     
             return redirect()->back()->with('success', $user->name . ' wurde für den Kurs angemeldet.');
         } catch (\Exception $e) {
@@ -163,6 +165,14 @@ class CourseRegistrationController extends Controller
                     ]);
                 }
             });
+
+            if ($validated['status'] == 'signed_up' && !auth()->user()->isJSCoach()) {
+                Mail::to(User::getJSCoachMail())->send(new NewSignUpEmail($course, $user));
+            }
+
+            if ($validated['status'] == 'registered') {
+                Mail::to($user->email)->send(new RegistrationConfirmation($course));
+            }
 
             return redirect()->back()->with('success', "{$user->name} wurde für den Kurs aktualisiert.");
         } catch (\Exception $e) {

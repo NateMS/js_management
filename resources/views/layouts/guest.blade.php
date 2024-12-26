@@ -24,7 +24,7 @@
         @livewireStyles
     </head>
     <body>
-        <div class="h-screen w-screen bg-cover bg-center bg-no-repeat" style="background-image: url('images/bg2.jpg');">
+        <div class="h-screen w-screen bg-cover bg-center bg-no-repeat" style="background-image: url('/images/bg2.jpg');">
             <div class="font-sans text-gray-900 antialiased backdrop-blur-lg">
                 {{ $slot }}
             </div>

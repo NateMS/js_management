@@ -3,11 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CourseRegistrationController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserHasTeam;
 use App\Http\Middleware\CheckCourseAccess;
 use Illuminate\Support\Facades\Artisan;
+  
+Route::get('/notify-courses', [NotificationController::class, 'NotifyCourseParticipants']);
+Route::get('/confirm-attendance/{token}', [NotificationController::class, 'confirm'])->name('email.confirm');
+Route::get('/cancel-attendance/{token}', [NotificationController::class, 'cancel'])->name('email.cancel');
 
 Route::post('/deploy', function () {
     if (request('key') !== env('DEPLOY_KEY')) {
