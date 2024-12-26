@@ -11,32 +11,32 @@
 
             <div>
                 <x-label for="name" value="{{ __('Name') }}" />
-                <x-input id="name" class="block mt-1 w-full bg-white/25 border-none" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                <x-input id="name" class="block mt-1 w-full bg-gray-100 sm:bg-white/25 border-none" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             </div>
 
             <div class="mt-4">
                 <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block mt-1 w-full bg-white/25 border-none" type="email" name="email" :value="old('email')" required autocomplete="email" />
+                <x-input id="email" class="block mt-1 w-full bg-gray-100 sm:bg-white/25 border-none" type="email" name="email" :value="old('email')" required autocomplete="email" />
             </div>
 
             <div class="mt-4">
                 <x-label for="birthdate" value="Geburtsdatum" />
-                <x-input id="birthdate" class="block mt-1 w-full bg-white/25 border-none" type="date" name="birthdate" :value="old('birthdate')" required autocomplete="date_of_birth" />
+                <x-input id="birthdate" class="block mt-1 w-full bg-gray-100 sm:bg-white/25 border-none" type="date" name="birthdate" :value="old('birthdate')" required autocomplete="date_of_birth" />
             </div>
 
             <div class="mt-4">
                 <x-label for="js_number" value="J&S Nummer (optional)" />
-                <x-input id="js_number" class="block mt-1 w-full bg-white/25 border-none" type="text" name="js_number" :value="old('js_number')" autocomplete="js_number" />
+                <x-input id="js_number" class="block mt-1 w-full bg-gray-100 sm:bg-white/25 border-none" type="text" name="js_number" :value="old('js_number')" autocomplete="js_number" />
             </div>
 
             <div class="mt-4">
                 <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full bg-white/25 border-none" type="password" name="password" required autocomplete="new-password" />
+                <x-input id="password" class="block mt-1 w-full bg-gray-100 sm:bg-white/25 border-none" type="password" name="password" required autocomplete="new-password" />
             </div>
 
             <div class="mt-4">
                 <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full bg-white/25 border-none" type="password" name="password_confirmation" required autocomplete="new-password" />
+                <x-input id="password_confirmation" class="block mt-1 w-full bg-gray-100 sm:bg-white/25 border-none" type="password" name="password_confirmation" required autocomplete="new-password" />
             </div>
 
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
