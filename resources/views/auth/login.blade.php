@@ -22,8 +22,6 @@
             oder jetzt einloggen:
         </div>
 
-        <hr class="my-4">
-
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
