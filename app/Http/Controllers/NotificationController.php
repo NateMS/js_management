@@ -41,6 +41,26 @@ class NotificationController extends Controller
             }
         }
 
+        $inOneWeek = now()->addWeek()->toDateString();
+
+        $coursesInFuture = Course::whereDate('date_start', $inOneWeek)->get();
+
+        foreach ($coursesInFuture as $course) {
+            $users = $course->users()->where('status', 'registered')->get();
+
+            foreach ($users as $user) {
+                $otherUsers = $users->reject(function ($item) use ($user) {
+                    return $item->id === $user->id;
+                });
+                try {
+                    Mail::to($user->email)->send(new \App\Mail\CourseReminderNotification($course, $otherUsers));
+                    $counter++;
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send email to ' . $user->email . ': ' . $e->getMessage());
+                }
+            }
+        }
+
         return response()->json(['message' => $counter . ' Notifications sent'], 200);
     }
 

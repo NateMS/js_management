@@ -8,6 +8,7 @@
 {{ $course->course_nr }}<br>
 @endif
 {{ $course->name }}<br>
+{{ $course->location }}<br>
 {{ $course->formatted_date_range }}{{ $course->duration }}<br>
 @if ($course->link)
     <a href="{{ $course->link }}" target="_blank">link</a>

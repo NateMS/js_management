@@ -8,6 +8,7 @@ Bitte bestätige, ob du an diesem Kurs teilgenommen hast:
 {{ $course->course_nr }}<br>
 @endif
 {{ $course->name }}<br>
+{{ $course->location }}<br>
 {{ $course->formatted_date_range }}{{ $course->duration }}<br><br>
 
 Hast du an diesem Kurs teilgenommen?
