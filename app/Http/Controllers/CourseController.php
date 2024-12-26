@@ -318,6 +318,37 @@ class CourseController extends Controller
         return view('courses.by_status', compact('courses', 'title', 'years', 'selectedYear'));
     }
 
+    public function listAllUsers(Request $request)
+    {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+
+        if (!$user->isJSVerantwortlich()) {
+            abort(404);
+        }
+        $years = Course::whereHas('users')
+        ->selectRaw('YEAR(date_start) as year')
+        ->distinct()
+        ->orderBy('year', 'desc')
+        ->pluck('year');
+        
+        $selectedYear = $years ? $request->input('year', $years->first()) : '';
+
+        $courseQuery = Course::whereHas('users')
+        ->with(['users']);
+    
+        if ($selectedYear) {
+            $courseQuery->whereRaw('YEAR(date_start) = ?', [$selectedYear]);
+        }
+    
+        $courses = $courseQuery->orderBy('date_start', 'asc')->get();
+
+        $title = 'Alle Teilnehmer';
+        return view('courses.by_status', compact('courses', 'title', 'years', 'selectedYear'));
+    }
+
+    
+
     public function destroy(Course $course)
     {
         if (auth()->user()->isJSCoach()) {

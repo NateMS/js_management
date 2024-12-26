@@ -63,6 +63,7 @@ Route::middleware([
         Route::get('/courses/registered', [CourseController::class, 'listRegisteredUsers'])->name('courses.registered');
         Route::get('/courses/attended', [CourseController::class, 'listAttendedUsers'])->name('courses.attended');
         Route::get('/courses/cancelled', [CourseController::class, 'listCancelledUsers'])->name('courses.cancelled');
+        Route::get('/courses/all', [CourseController::class, 'listAllUsers'])->name('courses.all');
 
         Route::middleware([CheckCourseAccess::class])->group(function() {
             Route::resource('courses', CourseController::class);

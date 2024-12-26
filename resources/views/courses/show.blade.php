@@ -155,7 +155,7 @@
                                         </td>    
                                     @else
 
-                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->pivot->formatted_status }}</td>
+                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3"><x-status :status="$user->pivot->status" /></td>
                                     @endif
                                 </tr>
                             @endforeach

@@ -17,10 +17,10 @@ class CourseUser extends Pivot
     public function getFormattedStatusAttribute()
     {
         return match ($this->status) {
-            'signed_up' => '⌛ Eingetragen',
-            'registered' => '✔️ Angemeldet',
-            'attended' => '✅ Teilgenommen',
-            'cancelled' => '❌ Abgesagt',
+            'signed_up' => 'Eingetragen',
+            'registered' => 'Angemeldet',
+            'attended' => 'Teilgenommen',
+            'cancelled' => 'Abgesagt',
             default => 'Unbekannt',
         };
     }

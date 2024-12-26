@@ -27,7 +27,7 @@
                             @if ($status)
                                 <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">
                                     @if($course->userStatus($user->id))
-                                        {{ $course->userStatus($user->id)->formatted_status }}
+                                        <x-status :status="$course->userStatus($user->id)->status" />
                                     @else
                                         <form action="{{ route('courses.signup', [$course, $user]) }}" method="POST" class="ml-auto" onsubmit="return confirm('Möchtest du dich für diesen Kurs eintragen? Der J&S-Coach wird per E-Mail informiert.');">
                                             @csrf

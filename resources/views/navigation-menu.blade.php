@@ -54,6 +54,10 @@
                                         Kursteilnehmer
                                     </div>
 
+                                    <x-dropdown-link href="{{ route('courses.all') }}" class="{{ request()->routeIs('courses.all') ? 'bg-gray-100 font-bold' : ''}}">
+                                        Alle Teilnehmer
+                                    </x-dropdown-link>
+
                                     <x-dropdown-link href="{{ route('courses.signed_up') }}" class="{{ request()->routeIs('courses.signed_up') ? 'bg-gray-100 font-bold' : ''}}">
                                         ⌛ Eingetragen
                                     </x-dropdown-link>
@@ -243,6 +247,9 @@
                 <div class="block px-4 pt-2 pb-1 text-xs text-gray-400">
                     Kursteilnehmer
                 </div>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.all') }}" :active="request()->routeIs('courses.all')">
+                    Alle Teilnehmer
+                </x-responsive-nav-link>
                 <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.signed_up') }}" :active="request()->routeIs('courses.signed_up')">
                     ⌛ Eingetragen
                 </x-responsive-nav-link>
