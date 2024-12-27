@@ -93,24 +93,24 @@
                     <table class="mt-4 w-full text-xs md:text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr class="text-left">
-                                <th class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Name</th>
-                                <th class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Datum</th>
-                                <th class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">Status</th>
+                                <th class="px-2 py-2 sm:px-3 sm:py-2 lg:px-4 lg:py-3">Name</th>
+                                <th class="px-2 py-2 sm:px-3 sm:py-2 lg:px-4 lg:py-3">Datum</th>
+                                <th class="px-2 py-2 sm:px-3 sm:py-2 lg:px-4 lg:py-3">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($users as $user)
                                 <tr class="odd:bg-white even:bg-gray-50 text-gray-900 border-b hover:bg-blue-50" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
-                                    <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->name }}</td>
-                                    <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $user->pivot->formatted_timestamp }}</td>
+                                    <td class="px-2 py-2 sm:px-3 sm:py-2 lg:px-4 lg:py-3">{{ $user->name }}</td>
+                                    <td class="px-2 py-2 sm:px-3 sm:py-2 lg:px-4 lg:py-3">{{ $user->pivot->formatted_timestamp }}</td>
                                     @if ((auth()->user()->isJSVerantwortlich() && $currentTeamUsers->contains($user) && !$user->isJSCoach()) || auth()->user()->isJSCoach())
-                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">
+                                        <td class="px-2 sm:px-2 lg:px-4">
                                             <span class="flex">
                                                 <form action="{{ route('courses.change-status', [$course]) }}" method="POST">
                                                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                     @csrf
                                                 
-                                                        <select id="status" onclick="event.stopPropagation()" onchange="this.form.submit()" name="status" class="text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
+                                                        <select id="status" onclick="event.stopPropagation()" onchange="this.form.submit()" name="status" class="w-38 sm:w-44 text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
                                                             @if ($user->pivot->status == 'signed_up')
                                                                 <option value="signed_up" {{ $user->pivot->status == 'signed_up' ? 'selected' : ''}}>⌛ Eingetragen</option>
                                                             @endif
@@ -135,7 +135,7 @@
                                             </span>
                                         </td>
                                     @elseif ($user->id == auth()->user()->id && $course->isInPast() && $course->userStatus($user->id)?->status == 'registered')
-                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">
+                                        <td class="px-2 py-2 sm:px-3 sm:py-2 lg:px-4 lg:py-3">
                                             
                                             <span class="flex">
                                                 <span>Teilgenommen:</span>
@@ -154,8 +154,7 @@
                                             </span>
                                         </td>    
                                     @else
-
-                                        <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3"><x-status :status="$user->pivot->status" /></td>
+                                        <td class="px-2 sm:px-3 lg:px-4"><x-status :status="$user->pivot->status" /></td>
                                     @endif
                                 </tr>
                             @endforeach

@@ -1,7 +1,7 @@
 <x-app-layout>
 <div class="container">
     <h1>Verfügbare Kurse</h1>
-    @forelse ($courses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
+    @forelse ($courses->sortBy('courseType.order')->groupBy('courseType.name') as $courseTypeName => $coursesForType)
         <div class="mb-4">
             <h2>{{ $courseTypeName }}</h2>
             <table class="table table-striped">

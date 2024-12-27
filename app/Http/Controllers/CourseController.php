@@ -94,7 +94,14 @@ class CourseController extends Controller
                 $query->where('teams.id', $currentTeam->id);
             })->get();
         }
-        return view('courses.create', compact('courseTypes'));
+
+        $title = "Kurs erfassen";
+        $buttonTitle = "Kurs erstellen";
+        $submitUrl = route('courses.store');
+        $backUrl = route('courses.index');
+        $course = new Course();
+        $method = 'POST';
+        return view('courses.form', compact('courseTypes', 'title', 'buttonTitle', 'submitUrl', 'backUrl', 'course', 'method'));
     }
 
     public function store(Request $request)
@@ -168,7 +175,13 @@ class CourseController extends Controller
                 $query->where('teams.id', $currentTeam->id);
             })->get();
         }
-        return view('courses.edit', compact('course', 'courseTypes'));
+
+        $title = "Kurs bearbeiten";
+        $buttonTitle = "Änderungen speichern";
+        $submitUrl = route('courses.update', $course);
+        $backUrl = route('courses.show', $course);
+        $method = 'PUT';
+        return view('courses.form', compact('course', 'courseTypes', 'title', 'buttonTitle', 'submitUrl', 'backUrl', 'method'));
     }
 
     public function update(Request $request, Course $course)

@@ -25,8 +25,8 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr class="text-left">
                                 <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3">Name</th>
-                                <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3 {{ $course->users->first()?->pivot->status == 'signed_up' || $course->users->first()?->pivot->status == 'registered' ? 'hidden md:table-cell' : '' }}">Geburtsdatum</th>
-                                <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3 {{ $course->users->first()?->pivot->status == 'signed_up' || $course->users->first()?->pivot->status == 'registered' ? 'hidden md:table-cell' : '' }}">E-Mail</th>
+                                <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3 hidden md:table-cell">Geburtsdatum</th>
+                                <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3 hidden md:table-cell">E-Mail</th>
                                 <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3 hidden sm:table-cell">J&S Nummer</th>
                                 <th class="px-2 py-2 md:px-3 lg:px-4 md:py-3">Status</th>
                             </tr>
@@ -35,8 +35,8 @@
                             @foreach($course->users as $user)
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 whitespace-nowrap text-gray-900 border-b" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2">{{ $user->name }}</td>
-                                    <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2 {{ $user->pivot->status == 'signed_up' || $user->pivot->status == 'registered' ? 'hidden md:table-cell' : '' }}"">{{ $user->formattedBirthdate }}</td>
-                                    <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2 {{ $user->pivot->status == 'signed_up' || $user->pivot->status == 'registered' ? 'hidden md:table-cell' : '' }}">{{ $user->email }}</td>
+                                    <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2 hidden md:table-cell"">{{ $user->formattedBirthdate }}</td>
+                                    <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2 hidden md:table-cell">{{ $user->email }}</td>
                                     <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
                                     <td class="px-2 py-1 md:px-3 lg:px-4 md:py-2">
                                         <span class="flex items-left">

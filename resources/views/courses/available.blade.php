@@ -46,7 +46,7 @@
         @if(!$plannedCourses->isEmpty())
             <x-content-view>
                 <h1 class="text-2xl font-bold text-gray-800 mb-4">Geplante Kurse</h1>
-                @foreach ($plannedCourses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
+                @foreach ($plannedCourses->sortBy('courseType.order')->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                     <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
                     <x-simple-course-table :courses="$coursesForType" :user="auth()->user()" status="true" />                                   
                 @endforeach
@@ -60,7 +60,7 @@
         @else
             <x-content-view>
                 <h1 class="text-2xl font-bold text-gray-800 mb-4">Verfügbare Kurse</h1>
-                @foreach ($courses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
+                @foreach ($courses->sortBy('courseType.order')->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                     <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
                     <x-simple-course-table :courses="$coursesForType" :user="auth()->user()" status="true" />                                   
                 @endforeach

@@ -27,7 +27,7 @@
         @if($courses->isEmpty())
             <x-no-data>Keine Kurse erfasst.</x-no-data>
         @else
-            @foreach ($courses->groupBy('courseType.name') as $courseTypeName => $coursesForType)
+            @foreach ($courses->sortBy('courseType.order')->groupBy('courseType.name') as $courseTypeName => $coursesForType)
                     <h2 class="mt-6 text-l font-semibold text-gray-700 mb-1">{{ $courseTypeName }}</h2>
                     <x-simple-course-table :courses="$coursesForType" />
             @endforeach

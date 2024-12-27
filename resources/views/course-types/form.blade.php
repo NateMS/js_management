@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-header>{{ __('Kurstyp bearbeiten') }}</x-header>
+        <x-header>{{ $title }}</x-header>
     </x-slot>
 
     <x-content-view>
         <h2 class="text-xl font-semibold mb-4">Kurstyp-Details</h2>
 
-        <form method="POST" action="{{ route('course-types.update', $courseType) }}">
+        <form method="POST" action="{{ $submitUrl }}">
             @csrf
-            @method('PUT')
+            @method($method)
             <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
                 <x-label for="name" value="Kurstyp" />
                 <x-input type="text" name="name" id="name" class="mt-1 block w-full" value="{{ old('name', $courseType->name) }}" required />
@@ -104,7 +104,7 @@
                 <div></div>
                 <div>
                     <x-button>
-                        Speichern
+                        {{ $buttonTitle }}
                     </x-button>
                     <a href="{{ route('course-types.index') }}" class="ml-3 btn btn-secondary">Abbrechen</a>
                 </div>

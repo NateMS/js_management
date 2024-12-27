@@ -25,7 +25,12 @@ class CourseTypeController extends Controller
     {
         $teams = Team::all();
         $courseTypes = CourseType::all();
-        return view('course-types.create', compact('teams', 'courseTypes'));
+        $title = "Kurstyp erfassen";
+        $buttonTitle = "Kurstyp erstellen";
+        $submitUrl = route('course-types.store');
+        $courseType = new CourseType();
+        $method = "POST";
+        return view('course-types.form', compact('teams', 'courseTypes', 'title', 'buttonTitle', 'submitUrl', 'courseType', 'method'));
     }
 
     /**
@@ -67,7 +72,11 @@ class CourseTypeController extends Controller
     {
         $teams = Team::all();
         $courseTypes = CourseType::all();
-        return view('course-types.edit', compact('courseType', 'teams', 'courseTypes'));
+        $title = "Kurstyp bearbeiten";
+        $buttonTitle = "Änderungen speichern";
+        $submitUrl = route('course-types.update', $courseType);
+        $method = "PUT";
+        return view('course-types.form', compact('courseType', 'teams', 'courseTypes', 'title', 'buttonTitle', 'submitUrl', 'method'));
     }
 
     /**

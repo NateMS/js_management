@@ -133,14 +133,16 @@ class Course extends Model
             return $query;
         }
 
-        $courseTypes = $user->attendedCourses()->with('courseType')->get()->pluck('courseType.id')->unique()->toArray();
+        $attendedCourseTypes = $user->attendedCourses()->pluck('course_type_id')->unique()->toArray();
 
-        return $query->whereHas('courseType', function ($courseTypeQuery) use ($courseTypes) {
-            $courseTypeQuery->where(function ($query) use ($courseTypes) {
+        return $query->whereHas('courseType', function ($courseTypeQuery) use ($attendedCourseTypes) {
+            $courseTypeQuery->where(function ($query) use ($attendedCourseTypes) {
                 $query->whereNull('prerequisite_course_type_id')
-                    ->orWhereIn('prerequisite_course_type_id', $courseTypes);
-            })
-            ->where('can_only_attend_once', false);
+                      ->orWhereIn('prerequisite_course_type_id', $attendedCourseTypes);
+            })->where(function ($query) use ($attendedCourseTypes) {
+                $query->where('can_only_attend_once', false)
+                      ->orWhereNotIn('id', $attendedCourseTypes);
+            });
         });
     }
 
