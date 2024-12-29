@@ -65,17 +65,29 @@ class UserController extends Controller
 
         $validityDate = $user->getCourseRevalidationDate();
 
-        $planned = $user
-            ->courses()
-            ->notHidden()
-            ->futureCourses()
-            ->whereIn('course_user.status', ['signed_up', 'registered'])
-            ->get();
-        $past = $user
-            ->courses()
-            ->notHidden()
-            ->pastCourses()
-            ->get();
+        if ($currUser->isJSVerantwortlich()) {
+            $planned = $user
+                ->courses()
+                ->futureCourses()
+                ->whereIn('course_user.status', ['signed_up', 'registered'])
+                ->get();
+            $past = $user
+                ->courses()
+                ->pastCourses()
+                ->get();
+        } else {
+            $planned = $user
+                ->courses()
+                ->notHidden()
+                ->futureCourses()
+                ->whereIn('course_user.status', ['signed_up', 'registered'])
+                ->get();
+            $past = $user
+                ->courses()
+                ->notHidden()
+                ->pastCourses()
+                ->get();
+        }
         return view('users.show', compact('user', 'validityDate', 'planned', 'past'));
     }
 
