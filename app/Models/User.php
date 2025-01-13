@@ -210,6 +210,17 @@ class User extends Authenticatable
         $query->where('birthdate', '>', Carbon::now()->subYears(18)->toDateString());
     }
 
+    public function getNextCourseDateAttribute()
+    {
+        $nextCourse = $this->courses()
+            ->where('date_end', '>=', Carbon::now())
+            ->where('course_user.status', '!=', 'cancelled')
+            ->orderBy('date_start')
+            ->value('date_start');
+        
+        return $nextCourse ? $nextCourse->format('d.m.Y') : '-';
+    }
+
     public function hasAttendedKidsCourse()
     {
         return $this->courses()

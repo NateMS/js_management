@@ -14,10 +14,13 @@
                             <tr>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Name</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">Geburtsdatum</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @if(Auth()->user()->isJSVerantwortlich())
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @endif
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">J&S gültig bis</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Kids</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2">Nächster Kurs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -25,10 +28,13 @@
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-medium text-gray-900">{{ $user->name }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">{{ $user->formattedBirthdate }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @if(Auth()->user()->isJSVerantwortlich())
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @endif
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold text-red-800">{{ $user->getCourseRevalidationDate() }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
+                                    <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->next_course_date }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -43,10 +49,13 @@
                             <tr>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Name</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">Geburtsdatum</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @if(Auth()->user()->isJSVerantwortlich())
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @endif
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">J&S gültig bis</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Kids</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2">Nächster Kurs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,10 +63,13 @@
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-medium text-gray-900">{{ $user->name }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">{{ $user->formattedBirthdate }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @if(Auth()->user()->isJSVerantwortlich())
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @endif
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold text-yellow-600">{{ $user->getCourseRevalidationDate() }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
+                                    <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->next_course_date }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -72,10 +84,13 @@
                             <tr>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Name</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">Geburtsdatum</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @if(Auth()->user()->isJSVerantwortlich())
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @endif
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">J&S gültig bis</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Kids</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2">Nächster Kurs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,10 +98,13 @@
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-medium text-gray-900">{{ $user->name }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">{{ $user->formattedBirthdate }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @if(Auth()->user()->isJSVerantwortlich())
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @endif
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold text-green-700">{{ $user->getCourseRevalidationDate() }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
+                                    <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->next_course_date }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -101,10 +119,13 @@
                             <tr>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Name</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">Geburtsdatum</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @if(Auth()->user()->isJSVerantwortlich())
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @endif
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">J&S gültig bis</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Kids</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2">Nächster Kurs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,10 +133,13 @@
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-medium text-gray-900">{{ $user->name }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">{{ $user->formattedBirthdate }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @if(Auth()->user()->isJSVerantwortlich())
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @endif
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold text-green-600">{{ $user->getCourseRevalidationDate() }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
+                                    <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->next_course_date }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -130,9 +154,12 @@
                             <tr>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">Name</th>
                                 <th class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">Geburtsdatum</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
-                                <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @if(Auth()->user()->isJSVerantwortlich())
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">E-Mail</th>
+                                    <th class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">J&S-Nummer</th>
+                                @endif
                                 <th class="px-2 sm:px-3 lg:px-6 py-2">1418</th>
+                                <th class="px-2 sm:px-3 lg:px-6 py-2">Nächster Kurs</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -140,9 +167,12 @@
                                 <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('users.show', $user->id) }}'">
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-medium text-gray-900">{{ $user->name }}</td>
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 hidden xs:table-cell">{{ $user->formattedBirthdate }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
-                                    <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @if(Auth()->user()->isJSVerantwortlich())
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden md:table-cell">{{ $user->email }}</td>
+                                        <td class="px-2 sm:px-3 lg:px-6 py-2 hidden sm:table-cell">{{ $user->js_number }}</td>
+                                    @endif
                                     <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->hasAttendedUnder18Course() ? 'Ja' : 'Nein' }}</td>
+                                    <td class="px-2 sm:px-3 lg:px-6 py-2 font-bold">{{ $user->next_course_date }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
