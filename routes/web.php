@@ -21,9 +21,6 @@ Route::post('/deploy', function () {
 
     $firstTimeMigration = !Schema::hasTable('users');
 
-    Artisan::call('config:cache');
-    Artisan::call('route:cache');
-    Artisan::call('view:cache');
     try {
         Artisan::call('migrate --force');
     } catch (Exception $e) {
@@ -43,6 +40,10 @@ Route::post('/deploy', function () {
             ], 500);
         }
     }
+
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
 
     return response()->json(['message' => 'Deployment complete!'], 200);
 })->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);;
