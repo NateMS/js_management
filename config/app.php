@@ -105,6 +105,10 @@ return [
         ),
     ],
 
+    'name' => env('DEPLOY_KEY', ''),
+    'name' => env('NOTIFY_KEY', ''),
+
+
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

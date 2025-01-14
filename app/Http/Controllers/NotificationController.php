@@ -13,7 +13,7 @@ class NotificationController extends Controller
 {
     public function notifyCourseParticipants(Request $request)
     {
-        if ($request->query('key') !== env('NOTIFY_KEY')) {
+        if ($request->query('key') !== config('NOTIFY_KEY')) {
             abort(403, 'Unauthorized');
         }
 

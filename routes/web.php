@@ -15,9 +15,16 @@ Route::get('/confirm-attendance/{token}', [NotificationController::class, 'confi
 Route::get('/cancel-attendance/{token}', [NotificationController::class, 'cancel'])->name('email.cancel');
 
 Route::post('/deploy', function () {
-    if (request('key') !== env('DEPLOY_KEY')) {
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+
+    if (request('key') !== config('DEPLOY_KEY')) {
         abort(403, 'Unauthorized');
     }
+
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('config:clear');
 
     $firstTimeMigration = !Schema::hasTable('users');
 
@@ -28,6 +35,10 @@ Route::post('/deploy', function () {
             'title:' => 'error with migration',
             'message:' => $e
         ], 500);
+
+        Artisan::call('config:cache');
+        Artisan::call('route:cache');
+        Artisan::call('view:cache');
     }
 
     if ($firstTimeMigration) {
@@ -38,6 +49,10 @@ Route::post('/deploy', function () {
                 'title:' => 'error with db:seed',
                 'message:' => $e
             ], 500);
+
+            Artisan::call('config:cache');
+            Artisan::call('route:cache');
+            Artisan::call('view:cache');
         }
     }
 
