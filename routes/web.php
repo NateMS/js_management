@@ -17,6 +17,8 @@ Route::get('/cancel-attendance/{token}', [NotificationController::class, 'cancel
 Route::post('/deploy', function () {
     Artisan::call('config:clear');
     Artisan::call('config:cache');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
 
     if (request('key') !== config('DEPLOY_KEY')) {
         abort(403, 'Unauthorized');
