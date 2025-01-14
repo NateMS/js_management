@@ -386,6 +386,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Course::create([
+            'name' => 'Modul Fortbildung Leiter/in',
+            'course_type_id' => $courseType3->id,
+            'date_start' => Carbon::parse('2025-02-15'),
+            'date_end' => Carbon::parse('2025-02-15'),
+            'location' => 'Eschlikon TG',
+            'notes' => '',
+            'registration_deadline' => Carbon::parse('2025-01-08'),
+            'link' => 'https://www.nds.baspo.admin.ch/publicArea/cadreEducationStructure/cadre/education-structure/-2574899887132409779/registration/-3600745030161770231',
+        ]);
+
+        Course::create([
             'course_nr' => 'AG 721a.22',
             'name' => 'EK Kindersport',
             'course_type_id' => $courseType4->id,
@@ -400,8 +411,8 @@ class DatabaseSeeder extends Seeder
             'course_nr' => '00-Kids',
             'name' => 'EK Kindersport / Grundkurs',
             'course_type_id' => $courseType4->id,
-            'date_start' => Carbon::parse('2020-01-01'),
-            'date_end' => Carbon::parse('2020-01-01'),
+            'date_start' => Carbon::parse('2018-01-01'),
+            'date_end' => Carbon::parse('2018-01-01'),
             'location' => '-',
             'is_hidden' => 1,
             'notes' => 'Dieser Kurs dient dazu, vorherige Kurse als besucht zu markieren.',
@@ -412,8 +423,8 @@ class DatabaseSeeder extends Seeder
             'course_nr' => '00-Grundkurs',
             'name' => 'Leiterkurs Kutu / Getu',
             'course_type_id' => $courseType1->id,
-            'date_start' => Carbon::parse('2020-01-01'),
-            'date_end' => Carbon::parse('2020-01-01'),
+            'date_start' => Carbon::parse('2018-01-01'),
+            'date_end' => Carbon::parse('2018-01-01'),
             'location' => '-',
             'is_hidden' => 1,
             'notes' => 'Dieser Kurs dient dazu, vorherige Kurse als besucht zu markieren.',
@@ -422,12 +433,12 @@ class DatabaseSeeder extends Seeder
 
         $user2->courses()->attach($oldGrundkurs->id, [
             'status' => 'attended',
-            'completed_at' => Carbon::parse('2020-01-01'),
+            'completed_at' => Carbon::parse('2018-01-01'),
         ]);
 
         $user2->courses()->attach($oldKidskurs->id, [
             'status' => 'attended',
-            'completed_at' => Carbon::parse('2020-01-01'),
+            'completed_at' => Carbon::parse('2018-01-01'),
         ]);
 
         $user2->courses()->attach($fk1->id, [
@@ -437,12 +448,12 @@ class DatabaseSeeder extends Seeder
 
         $user3->courses()->attach($oldGrundkurs->id, [
             'status' => 'attended',
-            'completed_at' => Carbon::parse('2020-01-01'),
+            'completed_at' => Carbon::parse('2018-01-01'),
         ]);
 
         $user3->courses()->attach($oldKidskurs->id, [
             'status' => 'attended',
-            'completed_at' => Carbon::parse('2020-01-01'),
+            'completed_at' => Carbon::parse('2018-01-01'),
         ]);
 
         $user3->courses()->attach($fk1->id, [
@@ -452,12 +463,12 @@ class DatabaseSeeder extends Seeder
 
         $user4->courses()->attach($oldGrundkurs->id, [
             'status' => 'attended',
-            'completed_at' => Carbon::parse('2020-01-01'),
+            'completed_at' => Carbon::parse('2018-01-01'),
         ]);
 
         $user4->courses()->attach($oldKidskurs->id, [
             'status' => 'attended',
-            'completed_at' => Carbon::parse('2020-01-01'),
+            'completed_at' => Carbon::parse('2018-01-01'),
         ]);
 
         $user4->courses()->attach($fk1->id, [
