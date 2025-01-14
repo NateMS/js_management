@@ -224,7 +224,7 @@ class CourseRegistrationController extends Controller
 
         try {
             $course->users()->detach($user->id);
-            return redirect()->back()->with('success', "{$user->name}' wurde aus diesem Kurs entfernt.");
+            return redirect()->back()->with('success', "{$user->name} wurde aus diesem Kurs entfernt.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Es gab einen Fehler beim Löschen.');
         }

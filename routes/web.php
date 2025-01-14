@@ -18,7 +18,7 @@ Route::post('/deploy', function () {
     Artisan::call('config:clear');
     Artisan::call('config:cache');
 
-    if (request('key') !== config('DEPLOY_KEY')) {
+    if (request('key') !== config('app.deploykey')) {
         abort(403, 'Unauthorized');
     }
 
