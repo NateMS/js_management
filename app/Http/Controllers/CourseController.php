@@ -155,7 +155,7 @@ class CourseController extends Controller
 
         $currentTeamUsers = $user->currentTeam->users;
 
-        $availableUsers = $course->availableUsers();
+        $availableUsers = $course->availableUsers()->sortBy('name');
 
         return view('courses.show', compact('course', 'users', 'userStatus', 'availableUsers', 'currentTeamUsers'));
     }
