@@ -4,65 +4,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseTypeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\DeploymentController;
 use App\Http\Controllers\CourseRegistrationController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserHasTeam;
 use App\Http\Middleware\CheckCourseAccess;
-use Illuminate\Support\Facades\Artisan;
+// use Illuminate\Foundation\Auth\EmailVerificationRequest;
+// use Illuminate\Http\Request;
   
 Route::get('/notify-courses', [NotificationController::class, 'NotifyCourseParticipants']);
 Route::get('/confirm-attendance/{token}', [NotificationController::class, 'confirm'])->name('email.confirm');
 Route::get('/cancel-attendance/{token}', [NotificationController::class, 'cancel'])->name('email.cancel');
-
-Route::post('/deploy', function () {
-    Artisan::call('config:clear');
-    Artisan::call('config:cache');
-
-    if (request('key') !== config('app.deploykey')) {
-        abort(403, 'Unauthorized');
-    }
-
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    Artisan::call('config:clear');
-
-    $firstTimeMigration = !Schema::hasTable('users');
-
-    try {
-        Artisan::call('migrate --force');
-    } catch (Exception $e) {
-        return response()->json([
-            'title:' => 'error with migration',
-            'message:' => $e
-        ], 500);
-
-        Artisan::call('config:cache');
-        Artisan::call('route:cache');
-        Artisan::call('view:cache');
-    }
-
-    if ($firstTimeMigration) {
-        try {
-            Artisan::call('db:seed --force');
-        } catch (Exception $e) {
-            return response()->json([
-                'title:' => 'error with db:seed',
-                'message:' => $e
-            ], 500);
-
-            Artisan::call('config:cache');
-            Artisan::call('route:cache');
-            Artisan::call('view:cache');
-        }
-    }
-
-    Artisan::call('config:cache');
-    Artisan::call('route:cache');
-    Artisan::call('view:cache');
-
-    return response()->json(['message' => 'Deployment complete!'], 200);
-})->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);;
-
+Route::post('/deploy', [DeploymentController::class, 'deploy'])->withoutMiddleware([Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 Route::middleware([
     'auth:sanctum',
@@ -90,17 +43,23 @@ Route::middleware([
             Route::post('/courses/{course}/change-status', [CourseRegistrationController::class, 'changeStatus'])->name('courses.change-status');
             Route::post('/courses/{course}/delete-status', [CourseRegistrationController::class, 'deleteStatus'])->name('courses.delete-status');
         });
-    
         Route::resource('course-types', CourseTypeController::class);
-        
-        Route::get('/team/users', [UserController::class, 'teamUsers'])->name('team.users');
-        Route::get('/team/users/{user}', [UserController::class, 'show'])->name('users.show');
-        Route::post('/team/users/{user}', [UserController::class, 'addJSNumber'])->name('users.add_js_number');
-    
-    
-        //Route::get('/courses/available', [CourseRegistrationController::class, 'index'])->name('courses.available');
-        //Route::post('/courses/{course}/register', [CourseRegistrationController::class, 'register'])->name('courses.register');
-        //Route::delete('/courses/{course}/unregister', [CourseRegistrationController::class, 'unregister'])->name('courses.unregister');
+        Route::resource('users', UserController::class);
     });
 });
 
+// Route::get('/email/verify', function () {
+//     return view('auth.verify-email');
+// })->middleware('auth')->name('verification.notice');
+
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+ 
+//     return redirect('/home');
+// })->middleware(['auth', 'signed'])->name('verification.verify');
+
+// Route::post('/email/verification-notification', function (Request $request) {
+//     $request->user()->sendEmailVerificationNotification();
+ 
+//     return back()->with('message', 'Verification link sent!');
+// })->middleware(['auth', 'throttle:6,1'])->name('verification.send');

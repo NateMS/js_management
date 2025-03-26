@@ -11,27 +11,18 @@
                     <th class="text-gray-700 uppercase pr-2 py-3">Geburtsdatum</th>
                     <td class="px-2 py-2">{{ $user->formattedBirthdate }}</td>
                 </tr>
-                @if (auth()->user()->isJSVerantwortlich() || auth()->user()->id == $user->id)
+                @if (auth()->user()->canEditUser($user) || auth()->user()->id == $user->id)
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">E-Mail</th>
                         <td class="px-2 py-2">{{ $user->email }}</td>
                     </tr>
                     <tr class="text-gray-900">
                         <th class="text-gray-700 uppercase pr-2 py-3">J&S-Nummer</th>
-                        <td class="px-2 py-2">
-                            @if (auth()->user()->isJSVerantwortlich())
-                                <form action="{{ route('users.add_js_number', $user) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('POST')
-                                    <span class="flex">
-                                        <input class="w-32 bg-gray-200 rounded-md py-2 border border-transparent" type="text" name="js_number" id="js_number" value="{{ old('js_number', $user->js_number) }}" />
-                                        <x-button type="submit" class="ml-2 px-4 py-3 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
-                                            ✓
-                                        </x-button>
-                                    </span>
-                                </form>
-                            @endif
-                        </td>
+                        <td class="px-2 py-2">{{ $user->js_number }}</td>
+                    </tr>
+                    <tr class="text-gray-900">
+                        <th class="text-gray-700 uppercase pr-2 py-3">Rolle</th>
+                        <td class="px-2 py-2">{{ $user->role }}</td>
                     </tr>
                 @endif
                 <tr class="text-gray-900">
@@ -43,7 +34,15 @@
                     <td class="px-2 py-2 font-bold">{{ $user->hasAttendedKidsCourse() ? 'Ja' : 'Nein' }}</td>
                 </tr>
             </table>
-        </div> 
+        </div>
+        @if (auth()->user()->canEditUser($user) && auth()->user()->id !== $user->id) 
+            <form class="inline" action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline" onsubmit="return confirm('Willst du diesen Benutzer löschen?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-4 py-2 bg-red-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-600 focus:bg-red-600 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Löschen</button>
+            </form>
+        @endif
+        <a href="{{ route('users.edit', $user) }}" class="px-4 py-2 inline-block bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Bearbeiten</a>
     </x-content-view>
 
     @if(!$planned->isEmpty())

@@ -51,7 +51,7 @@ class JetstreamServiceProvider extends ServiceProvider
             'course:delete',
             'manageMembers',
             'read',
-        ])->description('Der / Die J&S Verantwortliche kann Kurse erfassen.');
+        ])->description('Der / Die J&S Verantwortliche kann Kurse erfassen und Leiter für Kurse eintragen.');
 
         Jetstream::role('coach', 'Leiter', [
             'CourseUser:create',

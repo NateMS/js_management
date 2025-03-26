@@ -40,7 +40,7 @@
     "Bad Gateway": "Schlechtes Tor",
     "Bad Request": "Ungültige Anforderung",
     "Bandwidth Limit Exceeded": "Bandbreitenlimit überschritten",
-    "Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Bitte bestätigen Sie Ihre E-Mail-Adresse mit dem zugesandten Link, bevor Sie fortfahren. Sollten Sie keine E-Mail erhalten haben, senden wir Ihnen diese gerne erneut.",
+    "Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.": "Bitte bestätige deine E-Mail-Adresse mit dem zugesandten Link. Solltest du keine E-Mail erhalten haben, kannst du eine neue E-Mail anfordern.",
     "Browse": "Durchsuche",
     "Browser Sessions": "Browsersitzungen",
     "Cancel": "Abbrechen",

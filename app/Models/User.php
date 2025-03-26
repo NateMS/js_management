@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -125,6 +124,18 @@ class User extends Authenticatable
         return Carbon::parse($this->birthdate)->format('Y-m-d');
     }
 
+    public function getRoleAttribute()
+    {
+        if ($this->currentTeam) {
+            $userInTeam = $this->currentTeam->users->find($this->id);
+
+            if ($userInTeam) {
+                return Jetstream::findRole($this->currentTeam->users->where('id', $this->id)->first()->membership->role)->name;
+            }
+        }
+        return '';
+    }
+
     public function canManageTeamMembers($team)
     {
         return $this->ownsTeam($team) || $this->hasTeamPermission($team, 'manageMembers');
@@ -141,6 +152,19 @@ class User extends Authenticatable
         }
 
         return $course->courseType->teams->contains('id', $this->currentTeam->id);
+    }
+
+    public function canEditUser(User $user) : bool
+    {
+        if ($this->isJSCoach()) {
+            return true;
+        }
+
+        if (!$this->isJSVerantwortlich()) {
+            return false;
+        }
+
+        return $this->currentTeam->users->contains($user);
     }
 
     public function canAccessCourse(Course $course) : bool

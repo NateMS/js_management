@@ -18,7 +18,7 @@
                     <x-nav-link href="{{ route('courses.my-courses') }}" :active="request()->routeIs('courses.my-courses')">
                         Meine Kurse
                     </x-nav-link>
-                    <x-nav-link href="{{ route('team.users') }}" :active="request()->routeIs('team.users')">
+                    <x-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
                         Leiter
                     </x-nav-link>
 
@@ -228,7 +228,7 @@
             <x-responsive-nav-link href="{{ route('courses.my-courses') }}" :active="request()->routeIs('courses.my-courses')">
                 Meine Kurse
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('team.users') }}" :active="request()->routeIs('team.users')">
+            <x-responsive-nav-link href="{{ route('users.index') }}" :active="request()->routeIs('users.index')">
                 Leiter
             </x-responsive-nav-link>
         </div>
