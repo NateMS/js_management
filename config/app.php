@@ -106,7 +106,7 @@ return [
     ],
 
     'deploykey' => env('DEPLOY_KEY', ''),
-    'notifikey' => env('NOTIFY_KEY', ''),
+    'notifykey' => env('NOTIFY_KEY', ''),
 
 
     /*
