@@ -12,7 +12,7 @@ class DeploymentController extends Controller
         Artisan::call('config:clear');
         Artisan::call('config:cache');
     
-        if (request->query('key') !== config('app.deploykey')) {
+        if ($request->query('key') !== config('app.deploykey')) {
             abort(403, 'Unauthorized');
         }
     
