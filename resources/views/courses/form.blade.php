@@ -100,7 +100,7 @@
                     name="is_full" 
                     id="is_full" 
                     class="mt-1 block" 
-                    :checked="old('is_full', $courseType->is_full) ? true : false" 
+                    :checked="old('is_full', $course->is_full) ? true : false" 
                 />
                 @error('is_full')
                     <div class="mt-1 text-sm text-red-500">{{ $message }}</div>

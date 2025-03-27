@@ -55,7 +55,7 @@
                     @if($course->notes)
                         <tr class="text-gray-900">
                             <th class="text-gray-700 uppercase pr-2 py-3">Notizen</th>
-                            <td class="px-1 py-1 md:px-2 py-2">{{ $course->notes }}</td>
+                            <td class="px-1 py-1 md:px-2 py-2">{!! nl2br(e($course->notes)) !!}</td>
                         </tr>
                     @endif
                     @if($course->is_full)
