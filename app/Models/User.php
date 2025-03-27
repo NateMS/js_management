@@ -84,7 +84,7 @@ class User extends Authenticatable
     public function courses()
     {
         return $this->belongsToMany(Course::class, 'course_user')
-            ->withPivot(['status', 'signed_up_at', 'registered_at', 'completed_at', 'cancelled_at'])
+            ->withPivot(['status', 'signed_up_at', 'registered_at', 'completed_at', 'cancelled_at', 'waiting_list_at'])
             ->withTimestamps();
     }
 

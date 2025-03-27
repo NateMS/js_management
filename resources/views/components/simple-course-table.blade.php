@@ -18,7 +18,7 @@
                 </thead>
                 <tbody>
                     @foreach ($courses as $course)
-                        <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 whitespace-nowrap text-gray-900 border-b clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('courses.show', $course->id) }}'">
+                        <tr class="{{ $course->is_full ? 'bg-orange-50' : 'odd:bg-white even:bg-gray-50' }} hover:bg-blue-50 whitespace-nowrap text-gray-900 border-b clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('courses.show', $course->id) }}'">
                             <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 font-bold hidden md:table-cell">{{ $course->course_nr ?? '-' }}</td>
                             <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 {{ $status ? 'hidden lg:table-cell' : '' }}">{{ $course->name }}</td>
                             <td class="px-2 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3">{{ $course->location }}</td>
@@ -43,7 +43,7 @@
                 </tbody>
             @elseif (isset($course))
                 <tbody>
-                    <tr class="odd:bg-white even:bg-gray-50 hover:bg-blue-50 whitespace-nowrap text-gray-900 border-b clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('courses.show', $course->id) }}'">
+                    <tr class="{{ $course->is_full ? 'bg-orange-50' : 'odd:bg-white even:bg-gray-50' }} hover:bg-blue-50 whitespace-nowrap text-gray-900 border-b clickable-row" style="cursor: pointer;" onclick="window.location='{{ route('courses.show', $course->id) }}'">
                         @if ($status && $course->isInPast() && $course->userStatus($user->id)?->status == 'registered')
                             <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 font-bold">{{ $course->courseType->name }}<span class="hidden md:inline">, {{ $course->course_nr }}</span></td>
                             <td class="px-2 w-1/6 py-2 sm:px-3 sm:py-2 md:px-3 lg:px-4 lg:py-3 hidden md:table-cell">{{ $course->name }}</td>

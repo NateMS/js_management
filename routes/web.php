@@ -29,6 +29,7 @@ Route::middleware([
     ])->group(function () {
         Route::get('/courses/my-courses', [CourseController::class, 'myCourses'])->name('courses.my-courses');
         Route::get('/courses/signed-up', [CourseController::class, 'listSignedUpUsers'])->name('courses.signed_up');
+        Route::get('/courses/waiting-list', [CourseController::class, 'listWaitingListUsers'])->name('courses.waiting_list');
         Route::get('/courses/registered', [CourseController::class, 'listRegisteredUsers'])->name('courses.registered');
         Route::get('/courses/attended', [CourseController::class, 'listAttendedUsers'])->name('courses.attended');
         Route::get('/courses/cancelled', [CourseController::class, 'listCancelledUsers'])->name('courses.cancelled');

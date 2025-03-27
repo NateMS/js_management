@@ -40,8 +40,8 @@ class CourseTypeController extends Controller
     {
         $request->merge([
             'requires_repetition' => $request->has('requires_repetition') ? true : false,
-            'can_only_attend_once' => $request->has('requires_repetition') ? true : false,
-            'is_kids_course' => $request->has('requires_repetition') ? true : false,
+            'can_only_attend_once' => $request->has('can_only_attend_once') ? true : false,
+            'is_kids_course' => $request->has('is_kids_course') ? true : false,
 
         ]);
 
@@ -86,8 +86,8 @@ class CourseTypeController extends Controller
     {
         $request->merge([
             'requires_repetition' => $request->has('requires_repetition') ? true : false,
-            'can_only_attend_once' => $request->has('requires_repetition') ? true : false,
-            'is_kids_course' => $request->has('requires_repetition') ? true : false,
+            'can_only_attend_once' => $request->has('can_only_attend_once') ? true : false,
+            'is_kids_course' => $request->has('is_kids_course') ? true : false,
         ]);
 
         $validated = $request->validate([

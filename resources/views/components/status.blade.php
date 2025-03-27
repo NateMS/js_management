@@ -2,6 +2,10 @@
     <span class="flex items-center justify-center w-28 sm:w-32 h-6 sm:h-8 text-xs uppercase font-bold text-blue-500 bg-blue-100 rounded-full">
         eingetragen
     </span>
+@elseif($status == 'waiting_list')
+    <span class="flex items-center justify-center w-28 sm:w-32 h-6 sm:h-8 text-xs uppercase font-bold text-orange-400 bg-orange-100 rounded-full">
+        Warteliste
+    </span>
 @elseif($status == 'registered')
     <span class="flex items-center justify-center w-28 sm:w-32 h-6 sm:h-8 text-xs uppercase font-bold text-green-500 bg-green-100 rounded-full">
         angemeldet

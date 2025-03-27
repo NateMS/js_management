@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NewSignUpEmail;
 use App\Mail\RegistrationConfirmation;
+use App\Mail\WaitingListConfirmation;
 
 class CourseRegistrationController extends Controller
 {
@@ -50,6 +51,40 @@ class CourseRegistrationController extends Controller
             return redirect()->back()->with('success', 'Du hast dich eingetragen. Der J&S Coach wird per E-Mail informiert.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Es gab einen Fehler beim Eintragen in diesen Kurs.');
+        }
+    }
+
+    public function waitinglist(Request $request, Course $course, User $user)
+    {
+        $currUser = auth()->user();
+        if (!$currUser->isJSCoach()) {
+            return redirect()->back()->with('error', 'Du hast keine Berechtigung, um diesen Status zu ändern.');
+        }
+
+        if ($course->isInPast()) {
+            return redirect()->back()->with('error', 'Du kannst keine Person auf die Warteliste setzen, wenn der Kurs in der Vergangenheit ist.');
+        }
+        try {
+            DB::transaction(function () use ($user, $course) {
+                if ($user->courses()->where('course_id', $course->id)->exists()) {
+                    $user->courses()->updateExistingPivot($course->id, [
+                        'status' => 'waiting_list',
+                        'waiting_list' => now()
+                    ]);
+                } else {
+                    $user->courses()->attach($course->id, [
+                        'status' => 'waiting_list',
+                        'waiting_list' => now()
+                    ]);
+                }
+            });
+
+            Mail::to($user->email)->send(new WaitingListConfirmation($course));
+    
+            return redirect()->back()->with('success', $user->name . ' wurde für den Kurs auf die Warteliste gesetzt.');
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Es gab einen Fehler beim Ändern des Status für diesen Kurs.');
         }
     }
 
@@ -130,7 +165,7 @@ class CourseRegistrationController extends Controller
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'status' => 'required|in:signed_up,registered,attended,cancelled',
+            'status' => 'required|in:signed_up,registered,attended,cancelled,waiting_list',
         ]);
         $user = User::findOrFail($validated['user_id']);
         if (!$currUser->isJsCoach()) {
@@ -138,8 +173,8 @@ class CourseRegistrationController extends Controller
                 return redirect()->back()->with('error', 'Der Benutzer gehört nicht zum aktuellen Team.');
             }
 
-            if ($validated['status'] == 'registered') {
-                return redirect()->back()->with('error', 'Nur ein J&S Coach kann einen Leiter anmelden.');
+            if ($validated['status'] == 'registered' || $validated['status'] == 'waiting_list') {
+                return redirect()->back()->with('error', 'Nur ein J&S Coach kann eine:n Leiter:in anmelden.');
             }
 
             if (!$course->isInPast() && $course->userStatus($validated['user_id'])?->status == 'registered') {
@@ -173,6 +208,10 @@ class CourseRegistrationController extends Controller
 
             if ($validated['status'] == 'registered') {
                 Mail::to($user->email)->send(new RegistrationConfirmation($course));
+            }
+
+            if ($validated['status'] == 'waiting_list') {
+                Mail::to($user->email)->send(new WaitingListConfirmation($course));
             }
 
             return redirect()->back()->with('success', "{$user->name} wurde für den Kurs aktualisiert.");

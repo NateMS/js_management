@@ -59,7 +59,11 @@
                                     </x-dropdown-link>
 
                                     <x-dropdown-link href="{{ route('courses.signed_up') }}" class="{{ request()->routeIs('courses.signed_up') ? 'bg-gray-100 font-bold' : ''}}">
-                                        ⌛ Eingetragen
+                                        🖊️ Eingetragen
+                                    </x-dropdown-link>
+
+                                    <x-dropdown-link href="{{ route('courses.waiting_list') }}" class="{{ request()->routeIs('courses.cancelled') ? 'bg-gray-100 font-bold' : ''}}">
+                                        ⌛ Warteliste
                                     </x-dropdown-link>
 
                                     <x-dropdown-link href="{{ route('courses.registered') }}" class="{{ request()->routeIs('courses.registered') ? 'bg-gray-100 font-bold' : ''}}">
@@ -251,7 +255,10 @@
                     Alle Teilnehmer
                 </x-responsive-nav-link>
                 <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.signed_up') }}" :active="request()->routeIs('courses.signed_up')">
-                    ⌛ Eingetragen
+                    🖊️ Eingetragen
+                </x-responsive-nav-link>
+                <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.waiting_list') }}" :active="request()->routeIs('courses.cancelled')">
+                    ⌛ Warteliste
                 </x-responsive-nav-link>
                 <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.registered') }}" :active="request()->routeIs('courses.registered')">
                     ✔️ Angemeldet
@@ -262,6 +269,7 @@
                 <x-responsive-nav-link class="pl-6 text-sm" href="{{ route('courses.cancelled') }}" :active="request()->routeIs('courses.cancelled')">
                     ❌ Abgesagt
                 </x-responsive-nav-link>
+                
                 @if(Auth()->user()->isJSCoach())
                     <div class="block px-4 py-2 text-xs text-gray-400">
                         Kurstypen

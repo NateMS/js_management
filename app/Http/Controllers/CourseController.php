@@ -35,12 +35,12 @@ class CourseController extends Controller
         $plannedCourses = auth()->user()
             ->courses()
             ->futureCourses()
-            ->whereIn('course_user.status', ['signed_up', 'registered'])
+            ->whereIn('course_user.status', ['signed_up', 'registered', 'waiting_list'])
             ->get();
         $pastCourses = auth()->user()
             ->courses()
             ->pastCourses()
-            ->whereIn('course_user.status', ['signed_up', 'registered'])
+            ->whereIn('course_user.status', ['signed_up', 'registered', 'waiting_list'])
             ->get();
         return view('courses.available', compact('courses', 'lastAttended', 'validityDate', 'plannedCourses', 'pastCourses'));
     }
@@ -53,12 +53,14 @@ class CourseController extends Controller
         $registeredCourses = $user->getCoursesByStatus('registered');
         $attendedCourses = $user->getCoursesByStatus('attended');
         $cancelledCourses = $user->getCoursesByStatus('cancelled');
+        $waitingListCourses = $user->getCoursesByStatus('waiting_list');
 
         return view('courses.mycourses', compact(
             'signedUpCourses', 
             'registeredCourses', 
             'attendedCourses', 
-            'cancelledCourses'
+            'cancelledCourses',
+            'waitingListCourses'
         ));
     }
 
@@ -116,6 +118,10 @@ class CourseController extends Controller
             $query->where('teams.id', $currentTeam->id);
         })->pluck('id')->toArray();
 
+        $request->merge([
+            'is_full' => $request->has('is_full') ? true : false,
+        ]);
+
         $request->validate([
             'course_nr' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
@@ -130,6 +136,7 @@ class CourseController extends Controller
             'prerequisites' => 'nullable|string|max:255',
             'registration_deadline' => 'required|date|before:date_start',
             'notes' => 'nullable|string',
+            'is_full' => 'nullable|boolean',
             'link' => 'nullable|url',
         ]);
 
@@ -196,6 +203,10 @@ class CourseController extends Controller
             $query->where('teams.id', $currentTeam->id);
         })->pluck('id')->toArray();
 
+        $request->merge([
+            'is_full' => $request->has('is_full') ? true : false,
+        ]);
+
         $request->validate([
             'course_nr' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
@@ -209,6 +220,7 @@ class CourseController extends Controller
             'date_end' => 'required|date|after_or_equal:date_start',
             'prerequisites' => 'nullable|string|max:255',
             'registration_deadline' => 'required|date|before:date_start',
+            'is_full' => 'nullable|boolean',
             'notes' => 'nullable|string',
             'link' => 'nullable|url',
         ]);
@@ -236,6 +248,27 @@ class CourseController extends Controller
         ->get();
 
         $title = 'Eingetragene Kurse';
+        return view('courses.by_status', compact('courses', 'title'));
+    }
+
+    public function listWaitingListUsers()
+    {
+        $user = auth()->user();
+        $currentTeam = $user->currentTeam;
+
+        if (!$user->isJSVerantwortlich()) {
+            abort(404);
+        }
+        $courses = Course::whereHas('users', function ($query) {
+            $query->where('course_user.status', 'waiting_list');
+        })
+        ->with(['users' => function ($query) {
+            $query->where('course_user.status', 'waiting_list');
+        }])
+        ->orderBy('date_start', 'asc')
+        ->get();
+
+        $title = 'Auf Warteliste';
         return view('courses.by_status', compact('courses', 'title'));
     }
 

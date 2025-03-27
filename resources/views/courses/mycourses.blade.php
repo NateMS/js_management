@@ -8,6 +8,11 @@
             <h2 class="text-l font-semibold text-gray-700 mb-1">Eingetragene Kurse</h2>
             <x-simple-course-table :courses="$signedUpCourses" :user="auth()->user()" />
         @endif
+
+        @if($waitingListCourses->isNotEmpty())
+            <h2 class="pt-6 text-l font-semibold text-gray-700 mb-1">Kurse auf Warteliste</h2>
+            <x-simple-course-table :courses="$waitingListCourses" :user="auth()->user()" />
+        @endif
         
         @if($registeredCourses->isNotEmpty())
             <h2 class="pt-6 text-l font-semibold text-gray-700 mb-1">Durch J&S Coach angemeldete Kurse</h2>

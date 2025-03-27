@@ -45,20 +45,20 @@ class JetstreamServiceProvider extends ServiceProvider
     {
         Jetstream::defaultApiTokenPermissions(['read']);
 
-        Jetstream::role('js_manager', 'J&S Verantwortliche*r', [
+        Jetstream::role('js_manager', 'J&S Verantwortliche:r', [
             'course:create',
             'course:update',
             'course:delete',
             'manageMembers',
             'read',
-        ])->description('Der / Die J&S Verantwortliche kann Kurse erfassen und Leiter für Kurse eintragen.');
+        ])->description('&S Verantwortliche können Kurse erfassen und Leiter:innen für Kurse eintragen.');
 
-        Jetstream::role('coach', 'Leiter', [
+        Jetstream::role('coach', 'Leiter:in', [
             'CourseUser:create',
             'CourseUser:read',
             'CourseUser:update',
             'course:read',
             'team:read'
-        ])->description('Ein normaler Leiter kann sich nur für Kurse eintragen.');
+        ])->description('Leiter:innen können sich nur für Kurse eintragen.');
     }
 }

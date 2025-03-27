@@ -58,6 +58,11 @@
                             <td class="px-1 py-1 md:px-2 py-2">{{ $course->notes }}</td>
                         </tr>
                     @endif
+                    @if($course->is_full)
+                        <tr class="text-gray-900">
+                            <th class="text-orange-700 uppercase pr-2 py-3" colspan="2">Kurs ist ausgebucht (Anmeldungen auf Warteliste)</th>
+                        </tr>
+                    @endif
                     @if($course->link)
                         <tr class="text-gray-900">
                             <th class="text-gray-700 uppercase pr-2 py-3">
@@ -112,9 +117,12 @@
                                                 
                                                         <select id="status" onclick="event.stopPropagation()" onchange="this.form.submit()" name="status" class="w-38 sm:w-44 text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
                                                             @if ($user->pivot->status == 'signed_up')
-                                                                <option value="signed_up" {{ $user->pivot->status == 'signed_up' ? 'selected' : ''}}>⌛ Eingetragen</option>
+                                                                <option value="signed_up" selected>🖊️ Eingetragen</option>
                                                             @endif
-                                                            @if ((auth()->user()->isJSCoach() && $user->pivot->status == 'signed_up') || $user->pivot->status == 'registered')
+                                                            @if ((auth()->user()->isJSCoach() && $user->pivot->status == 'signed_up') || $user->pivot->status == 'waiting_list')
+                                                                <option value="waiting_list" {{ $user->pivot->status == 'waiting_list' ? 'selected' : ''}}>⏳ Warteliste</option>
+                                                            @endif
+                                                            @if ((auth()->user()->isJSCoach() && ($user->pivot->status == 'signed_up' || $user->pivot->status == 'waiting_list')) || $user->pivot->status == 'registered')
                                                                 <option value="registered" {{ $user->pivot->status == 'registered' ? 'selected' : ''}}>✔️ Angemeldet</option>
                                                             @endif
                                                             @if ($course->isInPast() || $user->pivot->status == 'attended')
@@ -166,16 +174,17 @@
                         @csrf
                         <span class="flex mt-2">
                             <select id="user_id" name="user_id" class="text-xs md:text-sm border-transparent bg-gray-200 rounded-md">
-                                <option value="" disabled selected>Leiter auswählen</option>
+                                <option value="" disabled selected>Leiter:in auswählen</option>
                                 @foreach ($availableUsers as $user)
                                     <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>
                             <select id="status" name="status" class="text-xs md:text-sm ml-2 border-transparent bg-gray-200 rounded-md">
                                 @if (!$course->isInPast())
-                                    <option value="signed_up">⌛ Eingetragen</option>
+                                    <option value="signed_up">🖊️ Eingetragen</option>
                                 @endif
                                 @if (auth()->user()->isJSCoach() && !$course->isInPast())
+                                    <option value="waiting_list">⌛ Warteliste</option>
                                     <option value="registered">✔️ Angemeldet</option>
                                 @endif
                                 @if ($course->isInPast())
@@ -194,8 +203,14 @@
                 @if ($userStatus == 'registered')
                     <span class="mt-3 block text-gray-600">Du wurdest durch den J&S-Coach für diesen Kurs angemeldet. Du kannst dich nicht mehr selbstständig austragen. Wenn du dich vom Kurs abgemeldet hast, melde dies dem J&S-Coach oder dem J&S Verantwortlichen deiner Riege.</span>
                 @endif
+                @if ($userStatus == 'waiting_list')
+                    <span class="mt-3 block text-gray-600">Du wurdest durch den J&S-Coach für diesen Kurs angemeldet, bist jedoch auf der Warteliste.</span>
+                @endif
                 @if ($userStatus == 'attended')
                     <span class="mt-3 block text-gray-600">Du hast an diesem Kurs teilgenommen!</span>
+                @endif
+                @if ($userStatus == 'cancelled')
+                    <span class="mt-3 block text-gray-600">Du hast die Teilnahme an diesem Kurs abgesagt.</span>
                 @endif
             </x-content-view> 
         </div>

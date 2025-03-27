@@ -93,6 +93,19 @@
                     <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
                 @enderror
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-6">
+                <x-label for="is_full" value="Warteliste" />
+                <x-input 
+                    type="checkbox" 
+                    name="is_full" 
+                    id="is_full" 
+                    class="mt-1 block" 
+                    :checked="old('is_full', $courseType->is_full) ? true : false" 
+                />
+                @error('is_full')
+                    <div class="mt-1 text-sm text-red-500">{{ $message }}</div>
+                @enderror
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 md:gap-6 mt-3 md:mt-6">
                 <div></div>
                 <div>

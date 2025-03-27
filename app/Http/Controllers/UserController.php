@@ -72,7 +72,7 @@ class UserController extends Controller
             $planned = $user
                 ->courses()
                 ->futureCourses()
-                ->whereIn('course_user.status', ['signed_up', 'registered'])
+                ->whereIn('course_user.status', ['signed_up', 'registered', 'waiting_list'])
                 ->get();
             $past = $user
                 ->courses()
@@ -83,7 +83,7 @@ class UserController extends Controller
                 ->courses()
                 ->notHidden()
                 ->futureCourses()
-                ->whereIn('course_user.status', ['signed_up', 'registered'])
+                ->whereIn('course_user.status', ['signed_up', 'registered', 'waiting_list'])
                 ->get();
             $past = $user
                 ->courses()

@@ -21,6 +21,7 @@ class CourseUser extends Pivot
             'registered' => 'Angemeldet',
             'attended' => 'Teilgenommen',
             'cancelled' => 'Abgesagt',
+            'waiting_list' => 'Warteliste',
             default => 'Unbekannt',
         };
     }
@@ -32,6 +33,7 @@ class CourseUser extends Pivot
             'registered' => 'registered_at',
             'attended' => 'completed_at',
             'cancelled' => 'cancelled_at',
+            'waiting_list' => 'waiting_list_at',
             default => 'Unbekannt',
         };
     }
@@ -43,6 +45,7 @@ class CourseUser extends Pivot
             'registered' => Carbon::parse($this->registered_at)->format('d.m.Y'),
             'attended' => Carbon::parse($this->completed_at)->format('d.m.Y'),
             'cancelled' => Carbon::parse($this->cancelled_at)->format('d.m.Y'),
+            'waiting_list' => Carbon::parse($this->waiting_list_at)->format('d.m.Y'),
             default => '/',
         };
     }

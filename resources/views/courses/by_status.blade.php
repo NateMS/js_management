@@ -51,6 +51,12 @@
                                                                 Anmelden
                                                             </button>
                                                         </form>
+                                                        <form action="{{ route('courses.waitinglist', [$course, $user]) }}" method="POST" class="ml-2">
+                                                            @csrf
+                                                            <button type="submit" class="px-2 py-1 md:px-4 md:py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">
+                                                                Auf Warteliste
+                                                            </button>
+                                                        </form>
                                                     @endif
                                                 @else
                                                     <span class="ml-2 flex items-center">teilgenommen:</span>

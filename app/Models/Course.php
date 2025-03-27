@@ -21,6 +21,7 @@ class Course extends Model
         'registration_deadline',
         'notes',
         'link',
+        'is_full',
     ];
 
     protected $casts = [
@@ -38,7 +39,7 @@ class Course extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(CourseUser::class)
-            ->withPivot('status', 'signed_up_at', 'registered_at', 'completed_at', 'cancelled_at')
+            ->withPivot('status', 'signed_up_at', 'registered_at', 'completed_at', 'cancelled_at', 'waiting_list_at')
             ->withTimestamps();
     }
 

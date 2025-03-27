@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-header>Leiter</x-header>
+        <x-header>Leiter:in</x-header>
     </x-slot>
 
     <x-content-view> 

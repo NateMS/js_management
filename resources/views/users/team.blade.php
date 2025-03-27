@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Leiter') }}
+            {{ __('Leiter:innen') }}
         </h2>
     </x-slot>
     <x-content-view>
         @if(Auth()->user()->isJSVerantwortlich())
             <span class="flex justify-end">
-                <a href="{{ route('users.create') }}" class="align-middle px-4 py-2 bg-gray-800 border border-transparent rounded-md inline-block font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Neuer Leiter</a>
+                <a href="{{ route('users.create') }}" class="align-middle px-4 py-2 bg-gray-800 border border-transparent rounded-md inline-block font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition ease-in-out duration-150">Leiter:in erfassen</a>
             </span>
         @endif
         <div class="space-y-5">
@@ -153,7 +153,7 @@
             @endif
             @if($under18->isNotEmpty())
                 <div>
-                    <h3 class="text-l font-semibold text-gray-700 mb-1">u18 Leiter</h3>
+                    <h3 class="text-l font-semibold text-gray-700 mb-1">u18 Leiter:innen</h3>
                     <table class="w-full text-xs md:text-sm text-left text-gray-500">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
