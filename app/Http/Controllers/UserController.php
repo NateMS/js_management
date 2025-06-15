@@ -147,6 +147,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Du hast keine Berechtigung, diesen Benutzer zu bearbeiten.');
         }
 
+        $currentTeam = $user->currentTeam;
         $roleKeys = collect(Jetstream::$roles)->pluck('key')->toArray();
 
         $request->validate([
@@ -158,6 +159,8 @@ class UserController extends Controller
         ]);
 
         $user->update($request->all());
+
+        $user->teams()->updateExistingPivot($currentTeam->id, ['role' => $request->get('role')]);
         
         return redirect()->route('users.show', $user)->with('success', 'Benutzer angepasst!');
     }
