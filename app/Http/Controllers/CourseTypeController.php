@@ -13,7 +13,7 @@ class CourseTypeController extends Controller
      */
     public function index()
     {
-        if (!$user->isJsCoach()) {
+        if (!auth()->user()->isJsCoach()) {
             abort(404);
         }
         $courseTypes = CourseType::orderBy('order')->get();
@@ -26,7 +26,7 @@ class CourseTypeController extends Controller
      */
     public function create()
     {
-        if (!$user->isJsCoach()) {
+        if (!auth()->user()->isJsCoach()) {
             abort(404);
         }
         $teams = Team::all();
@@ -44,7 +44,7 @@ class CourseTypeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$user->isJsCoach()) {
+        if (!auth()->user()->isJsCoach()) {
             abort(404);
         }
         $request->merge([
@@ -79,7 +79,7 @@ class CourseTypeController extends Controller
      */
     public function edit(CourseType $courseType)
     {
-        if (!$user->isJsCoach()) {
+        if (!auth()->user()->isJsCoach()) {
             abort(404);
         }
         $teams = Team::all();
@@ -96,7 +96,7 @@ class CourseTypeController extends Controller
      */
     public function update(Request $request, CourseType $courseType)
     {
-        if (!$user->isJsCoach()) {
+        if (!auth()->user()->isJsCoach()) {
             abort(404);
         }
         $request->merge([
@@ -129,7 +129,7 @@ class CourseTypeController extends Controller
      */
     public function destroy(CourseType $courseType)
     {
-        if (!$user->isJsCoach()) {
+        if (!auth()->user()->isJsCoach()) {
             abort(404);
         }
         $courseType->delete();
