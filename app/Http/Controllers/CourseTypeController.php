@@ -13,6 +13,9 @@ class CourseTypeController extends Controller
      */
     public function index()
     {
+        if (!$user->isJsCoach()) {
+            abort(404);
+        }
         $courseTypes = CourseType::orderBy('order')->get();
         return view('course-types.index', compact('courseTypes'));
     }
@@ -23,6 +26,9 @@ class CourseTypeController extends Controller
      */
     public function create()
     {
+        if (!$user->isJsCoach()) {
+            abort(404);
+        }
         $teams = Team::all();
         $courseTypes = CourseType::all();
         $title = "Kurstyp erfassen";
@@ -38,6 +44,9 @@ class CourseTypeController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$user->isJsCoach()) {
+            abort(404);
+        }
         $request->merge([
             'requires_repetition' => $request->has('requires_repetition') ? true : false,
             'can_only_attend_once' => $request->has('can_only_attend_once') ? true : false,
@@ -70,6 +79,9 @@ class CourseTypeController extends Controller
      */
     public function edit(CourseType $courseType)
     {
+        if (!$user->isJsCoach()) {
+            abort(404);
+        }
         $teams = Team::all();
         $courseTypes = CourseType::all();
         $title = "Kurstyp bearbeiten";
@@ -84,6 +96,9 @@ class CourseTypeController extends Controller
      */
     public function update(Request $request, CourseType $courseType)
     {
+        if (!$user->isJsCoach()) {
+            abort(404);
+        }
         $request->merge([
             'requires_repetition' => $request->has('requires_repetition') ? true : false,
             'can_only_attend_once' => $request->has('can_only_attend_once') ? true : false,
@@ -114,6 +129,9 @@ class CourseTypeController extends Controller
      */
     public function destroy(CourseType $courseType)
     {
+        if (!$user->isJsCoach()) {
+            abort(404);
+        }
         $courseType->delete();
 
         return redirect()->route('course-types.index')->with('success', 'Kurstyp gelöscht.');
