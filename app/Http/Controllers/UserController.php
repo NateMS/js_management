@@ -160,7 +160,11 @@ class UserController extends Controller
 
         $user->update($request->all());
 
-        $user->teams()->updateExistingPivot($currentTeam->id, ['role' => $request->get('role')]);
+        if ($user->teams()->where('team_id', $currentTeam->id)->exists()) {
+            $user->teams()->updateExistingPivot($currentTeam->id, ['role' => $request->get('role')]);
+        } else {
+            $user->teams()->attach($currentTeam->id, ['role' => $request->get('role')]);
+        }
         
         return redirect()->route('users.show', $user)->with('success', 'Benutzer angepasst!');
     }
