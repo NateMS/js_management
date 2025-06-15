@@ -126,11 +126,11 @@ class User extends Authenticatable
 
     public function getRoleAttribute()
     {
-        if ($this->currentTeam) {
-            $userInTeam = $this->currentTeam->users->find($this->id);
+        if (auth()->user()->currentTeam) {
+            $userInTeam = auth()->user()->currentTeam->users->find($this->id);
 
             if ($userInTeam) {
-                return Jetstream::findRole($this->currentTeam->users->where('id', $this->id)->first()->membership->role)->name;
+                return Jetstream::findRole(auth()->user()->currentTeam->users->where('id', $this->id)->first()->membership->role)->name;
             }
         }
         return '';
