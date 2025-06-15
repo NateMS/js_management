@@ -147,7 +147,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Du hast keine Berechtigung, diesen Benutzer zu bearbeiten.');
         }
 
-        $currentTeam = auth()->user()->currentTeam();
+        $currentTeam = auth()->user()->currentTeam;
         $roleKeys = collect(Jetstream::$roles)->pluck('key')->toArray();
 
         $request->validate([
